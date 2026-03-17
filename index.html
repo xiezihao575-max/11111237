@@ -3,109 +3,252 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>全平台一键铺货 · 多语言翻译</title>
+<title>全平台一键铺货 SaaS</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,Roboto,sans-serif}
 body{background:#f6f7f9;color:#222}
-.header{width:100%;height:60px;background:#165dff;color:white;display:flex;align-items:center;padding:0 20px;font-weight:600;position:fixed;top:0;left:0;z-index:99}
-.main{margin-top:60px;padding:20px}
-.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 1px 4px #00000008}
-.card-title{font-size:16px;font-weight:600;margin-bottom:12px}
-input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin-top:10px;font-size:14px}
-textarea{resize:vertical}
-.lang-box{margin-top:10px;display:flex;flex-wrap:wrap;gap:10px}
-.lang-item{padding:8px 12px;border:1px solid #ddd;border-radius:8px;cursor:pointer}
-.lang-item.active{background:#e8f3ff;color:#165dff;border-color:#165dff}
-.upload{border:2px dashed #ddd;padding:25px;text-align:center;border-radius:8px;margin-top:10px;cursor:pointer}
-.btn{background:#165dff;color:white;padding:14px;border-radius:8px;text-align:center;font-weight:600;margin-top:20px;cursor:pointer}
-.btn-green{background:#00b96b}
-.result{background:#f7f8fa;padding:15px;border-radius:8px;margin-top:15px;white-space:pre-wrap;font-size:14px}
+.header{width:100%;height:60px;background:#165dff;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:fixed;top:0;left;0;z-index:99}
+.logo{font-size:18px;font-weight:600}
+.header-right{gap:12px;display:flex}
+.header-btn{background:rgba(255,255,255,0.2);border:none;color:white;padding:8px 14px;border-radius:6px;cursor:pointer}
+.wrap{display:flex;margin-top:60px;min-height:calc(100vh - 60px)}
+.sidebar{width:220px;background:#fff;border-right:1px solid #eaeefb;position:fixed;height:100%;overflow-y:auto;padding:20px 0}
+.sidebar-group{margin-bottom:20px}
+.sidebar-label{font-size:12px;color:#999;padding:0 20px;margin-bottom:8px}
+.sidebar-item{height:44px;display:flex;align-items:center;padding:0 20px;cursor:pointer;font-size:14px}
+.sidebar-item.active{background:#e8f3ff;color:#165dff;font-weight:500;border-left:3px solid #165dff}
+.content{flex:1;margin-left:220px;padding:24px}
+.card{background:white;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05);padding:20px;margin-bottom:20px}
+.card-title{font-size:16px;font-weight:600;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #f0f0f0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+input,button,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin-top:10px;font-size:14px}
+button{background:#165dff;color:white;border:none;cursor:pointer}
+button:hover{background:#0d4bd1}
+.result{margin-top:16px;padding:16px;background:#f1f7ff;border-radius:8px;white-space:pre-line;font-size:14px}
+.log{background:#f8f9fa;padding:10px;border-radius:6px;margin-top:8px;font-size:12px}
+.upload-area{border:2px dashed #ddd;padding:30px;text-align:center;border-radius:8px;margin-top:10px;cursor:pointer}
+.flow-card{border:1px solid #eaeefb;border-radius:10px;padding:16px;margin-bottom:12px}
+.mask{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:999}
+.popup{background:white;padding:24px;border-radius:12px;width:90%;max-width:400px}
 </style>
 </head>
 <body>
 
-<div class="header">全平台一键铺货 · 多语言翻译</div>
-<div class="main">
-
-  <div class="card">
-    <div class="card-title">📝 商品信息（只填中文）</div>
-    <input id="title" placeholder="中文标题">
-    <textarea id="content" rows="4" placeholder="中文文案描述"></textarea>
+<!-- 登录 -->
+<div class="mask" id="loginMask">
+  <div class="popup">
+    <h3>登录</h3>
+    <input id="user" placeholder="账号">
+    <input id="pwd" type="password" placeholder="密码">
+    <button onclick="login()">登录</button>
+    <button onclick="reg()" style="margin-top:8px">注册</button>
   </div>
+</div>
 
-  <div class="card">
-    <div class="card-title">🌐 翻译语言（点击开关）</div>
-    <div class="lang-box">
-      <div class="lang-item" data-lang="en">英语</div>
-      <div class="lang-item" data-lang="vi">越南语</div>
-      <div class="lang-item" data-lang="th">泰语</div>
-      <div class="lang-item" data-lang="ms">马来语</div>
-      <div class="lang-item" data-lang="id">印尼语</div>
+<!-- 顶部 -->
+<div class="header">
+  <div class="logo">全平台一键铺货</div>
+  <div class="header-right">
+    <button class="header-btn" id="loginBtn" onclick="showLogin()">登录</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="sidebar">
+    <div class="sidebar-group"><div class="sidebar-label">控制台</div><div class="sidebar-item active" onclick="go('dashboard')">数据概览</div></div>
+
+    <div class="sidebar-group"><div class="sidebar-label">商品发布</div>
+      <div class="sidebar-item" onclick="go('publish')">📦 一键铺货</div>
+      <div class="sidebar-item" onclick="go('shopee')">Shopee</div>
+      <div class="sidebar-item" onclick="go('tiktok')">TikTok Shop</div>
+      <div class="sidebar-item" onclick="go('fb')">Facebook</div>
+      <div class="sidebar-item" onclick="go('ig')">Instagram</div>
+      <div class="sidebar-item" onclick="go('lazada')">Lazada</div>
+      <div class="sidebar-item" onclick="go('douyin')">抖音</div>
+    </div>
+
+    <div class="sidebar-group"><div class="sidebar-label">工具</div>
+      <div class="sidebar-item" onclick="go('watermark')">去水印</div>
+      <div class="sidebar-item" onclick="go('copy')">AI文案生成</div>
+    </div>
+
+    <div class="sidebar-group"><div class="sidebar-label">扣子工作流</div>
+      <div class="sidebar-item" onclick="go('coze')">工作流中心</div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">🖼️ 上传图片 / 视频</div>
-    <div class="upload" onclick="document.getElementById('file').click()">点击选择文件</div>
-    <input type="file" id="file" multiple accept="image/*,video/*" style="display:none">
+  <div class="content">
+
+    <!-- 仪表盘 -->
+    <div class="page active" id="dashboard">
+      <div class="card"><div class="card-title">数据概览</div>
+        <div class="grid">
+          <div><p>今日发布</p ><h2>0</h2></div>
+          <div><p>图片处理</p ><h2>0</h2></div>
+          <div><p>视频生成</p ><h2>0</h2></div>
+          <div><p>文案生成</p ><h2>0</h2></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔥 核心：全平台一键铺货 -->
+    <div class="page" id="publish">
+      <div class="card"><div class="card-title">📦 全平台一键上传商品</div>
+
+        <input placeholder="商品标题" id="title">
+        <textarea placeholder="商品描述" id="desc" rows="3"></textarea>
+        <input placeholder="价格" id="price" type="number">
+        <input placeholder="库存" id="stock" type="number">
+
+        <div class="upload-area" onclick="document.getElementById('files').click()">
+          点击上传 图片 / 视频
+        </div>
+        <input type="file" id="files" multiple accept="image/*,video/*" style="display:none">
+
+        <div style="margin-top:16px">
+          <label><input type="checkbox" class="platform" value="shopee"> Shopee</label>
+          <label style="margin-left:10px"><input type="checkbox" class="platform" value="tiktok"> TikTok</label>
+          <label style="margin-left:10px"><input type="checkbox" class="platform" value="fb"> Facebook</label>
+          <label style="margin-left:10px"><input type="checkbox" class="platform" value="ig"> Instagram</label>
+          <label style="margin-left:10px"><input type="checkbox" class="platform" value="lazada"> Lazada</label>
+          <label style="margin-left:10px"><input type="checkbox" class="platform" value="douyin"> 抖音</label>
+        </div>
+
+        <button style="margin-top:20px;background:#00b96b" onclick="startAll()">
+          🚀 一键发布到所选平台
+        </button>
+
+        <div id="result" class="result" style="margin-top:20px"></div>
+      </div>
+    </div>
+
+    <!-- 空页面占位 -->
+    <div class="page" id="shopee"><div class="card"><div class="card-title">Shopee 发布</div></div></div>
+    <div class="page" id="tiktok"><div class="card"><div class="card-title">TikTok 发布</div></div></div>
+    <div class="page" id="fb"><div class="card"><div class="card-title">Facebook 发布</div></div></div>
+    <div class="page" id="ig"><div class="card"><div class="card-title">Instagram 发布</div></div></div>
+    <div class="page" id="lazada"><div class="card"><div class="card-title">Lazada 发布</div></div></div>
+    <div class="page" id="douyin"><div class="card"><div class="card-title">抖音发布</div></div></div>
+    <div class="page" id="watermark"><div class="card"><div class="card-title">去水印</div></div></div>
+    <div class="page" id="copy"><div class="card"><div class="card-title">AI文案生成</div></div></div>
+
+    <!-- 扣子工作流 -->
+    <div class="page" id="coze">
+      <div class="card"><div class="card-title">扣子自动化工作流</div>
+
+        <div class="flow-card">
+          <h4>1. 商品全流程发布（图+视频+文案+多平台）</h4>
+          <button onclick="runFlow('publish_all')">运行</button>
+        </div>
+
+        <div class="flow-card">
+          <h4>2. 图片/视频去水印 + 优化</h4>
+          <button onclick="runFlow('media_clean')">运行</button>
+        </div>
+
+        <div class="flow-card">
+          <h4>3. AI 自动生成标题/文案/标签（多语言）</h4>
+          <button onclick="runFlow('ai_copy')">运行</button>
+        </div>
+
+        <div class="flow-card">
+          <h4>4. 批量同步到 Shopee + TikTok + FB + IG</h4>
+          <button onclick="runFlow('batch_publish')">运行</button>
+        </div>
+
+        <div style="margin-top:20px">
+          <h4>运行日志</h4>
+          <div id="cozeLog" style="max-height:300px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
-
-  <div class="btn btn-green" onclick="doAll()">🚀 一键翻译 + 一键发布</div>
-
-  <div class="result" id="result"></div>
 </div>
 
 <script>
-// 语言开关
-document.querySelectorAll('.lang-item').forEach(item => {
-  item.addEventListener('click', () => item.classList.toggle('active'))
-})
-
-// 内置翻译库（不用接口，直接翻）
-const dict = {
-  en: { name: "英语" },
-  vi: { name: "越南语" },
-  th: { name: "泰语" },
-  ms: { name: "马来语" },
-  id: { name: "印尼语" }
+// 页面切换
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
+  document.getElementById(id).classList.add('active')
+  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'))
+  event.target.classList.add('active')
 }
 
-async function doAll() {
-  const title = document.getElementById('title').value.trim()
-  const content = document.getElementById('content').value.trim()
-  const result = document.getElementById('result')
+// 登录
+function showLogin(){document.getElementById("loginMask").style.display="flex"}
+function login(){let u=document.getElementById("user").value;localStorage.setItem('user',u);document.getElementById('loginMask').style.display='none';document.getElementById('loginBtn').innerText=u}
+function reg(){login()}
 
-  if (!title || !content) {
-    alert('请填写标题和文案')
-    return
-  }
+// ==========================
+// 🔥 一键全平台发布
+// ==========================
+function startAll(){
+  let title = document.getElementById('title').value
+  let desc = document.getElementById('desc').value
+  let price = document.getElementById('price').value
+  let platforms = Array.from(document.querySelectorAll('.platform:checked')).map(i=>i.value)
 
-  const langs = Array.from(document.querySelectorAll('.lang-item.active'))
-    .map(it => it.dataset.lang)
+  if(!title){alert('请输入标题');return}
+  if(platforms.length===0){alert('请选择平台');return}
 
-  if (langs.length === 0) {
-    alert('请选择至少一种语言')
-    return
-  }
+  document.getElementById('result').innerText =
+  `🚀 开始发布...\n标题：${title}\n价格：${price}\n平台：${platforms.join(',')}\n\n正在通过扣子工作流自动执行...`
 
-  result.innerText = "⏳ 正在处理...\n\n"
+  runFlow('publish_all')
+}
 
-  const output = {}
-  langs.forEach(lang => {
-    output[lang] = {
-      title: `[${lang}] ${title}`,
-      content: `[${lang}] ${content}`
+// ==========================
+// 扣子工作流真实对接
+// ==========================
+const COZE = {
+  token: "你的扣子token",
+  bot_id: "你的bot_id",
+  workflow_id: "你的workflow_id",
+  api: "https://api.coze.cn/v1/workflow/run",
+
+  log(text){
+    let t = new Date().toLocaleTimeString()
+    let logBox = document.getElementById("cozeLog")
+    logBox.innerHTML += `<div class="log">[${t}] ${text}</div>`
+    logBox.scrollTop = logBox.scrollHeight
+  },
+
+  async run(flow){
+    this.log("启动工作流："+flow)
+    try{
+      let res = await fetch(this.api,{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":"Bearer "+this.token
+        },
+        body:JSON.stringify({
+          bot_id:this.bot_id,
+          workflow_id:this.workflow_id,
+          user_id:localStorage.getItem('user')||'guest',
+          parameters:{
+            flow_type: flow,
+            title: document.getElementById('title').value,
+            desc: document.getElementById('desc').value,
+            price: document.getElementById('price').value,
+            platforms: Array.from(document.querySelectorAll('.platform:checked')).map(i=>i.value)
+          }
+        })
+      })
+      let data = await res.json()
+      this.log("✅ 执行完成")
+      this.log("返回："+JSON.stringify(data))
+    }catch(e){
+      this.log("❌ 错误："+e.message)
     }
-    result.innerText += `✅ ${dict[lang].name} 已完成\n`
-  })
+  }
+}
 
-  result.innerText += "\n🌐 多语言文案已生成：\n\n"
-  result.innerText += JSON.stringify(output, null, 2)
-
-  result.innerText += "\n\n🚀 已同步至：Shopee / TikTok / FB / IG / 抖音 / Lazada\n"
-  result.innerText += "✅ 全平台一键发布完成！"
+function runFlow(flow){
+  COZE.run(flow)
 }
 </script>
-
 </body>
 </html>
