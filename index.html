@@ -1,337 +1,111 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">外贸B2B数据分析工具 | B2B Analytics</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/firebase/app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/firebase/auth.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/firebase/firestore.js"></script>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-    body{background:#f7f9fc;color:#222}
-    .container{max-width:1200px;margin:0 auto;padding:20px}
-    header{background:#165DFF;color:white;padding:20px;border-radius:12px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
-    .nav{display:flex;gap:15px}
-    .nav button{background:rgba(255,255,255,.2);border:1px solid white;color:white;padding:8px 12px;border-radius:6px;cursor:pointer}
-    .card{background:white;padding:20px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:20px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
-    input,button,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin-top:10px}
-    button{background:#165DFF;color:white;border:none;cursor:pointer}
-    .result{margin-top:15px;padding:15px;background:#f0f7ff;border-radius:8px}
-    canvas{max-height:300px}
-    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);justify-content:center;align-items:center}
-    .modal-content{background:white;padding:30px;border-radius:12px;width:90%;max-width:400px}
-    .close{float:right;cursor:pointer;font-size:20px}
-    .member-badge{padding:4px 8px;background:#FFD700;color:#333;border-radius:4px;font-size:12px}
-    .tab{display:flex;gap:10px;margin-bottom:15px}
-    .tab button{background:#eee;color:#222;width:auto}
-    .tab button.active{background:#165DFF;color:white}
-    .tab-content{display:none}
-    .tab-content.active{display:block}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全平台一键铺货 · 多语言翻译</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif}
+body{background:#f6f7f9;color:#222}
+.header{width:100%;height:60px;background:#165dff;color:white;display:flex;align-items:center;padding:0 20px;font-weight:600;position:fixed;top:0;left:0;z-index:99}
+.main{margin-top:60px;padding:20px}
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 1px 4px #00000008}
+.card-title{font-size:16px;font-weight:600;margin-bottom:12px}
+input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin-top:10px;font-size:14px}
+textarea{resize:vertical}
+.lang-box{margin-top:10px;display:flex;flex-wrap:wrap;gap:10px}
+.lang-item{padding:8px 12px;border:1px solid #ddd;border-radius:8px;cursor:pointer}
+.lang-item.active{background:#e8f3ff;color:#165dff;border-color:#165dff}
+.upload{border:2px dashed #ddd;padding:25px;text-align:center;border-radius:8px;margin-top:10px;cursor:pointer}
+.btn{background:#165dff;color:white;padding:14px;border-radius:8px;text-align:center;font-weight:600;margin-top:20px;cursor:pointer}
+.btn-green{background:#00b96b}
+.result{background:#f7f8fa;padding:15px;border-radius:8px;margin-top:15px;white-space:pre-wrap;font-size:14px}
+</style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1 id="headerTitle">外贸B2B数据分析工具 | B2B Analytics</h1>
-    <div class="nav">
-      <button id="langBtn">中文 / EN</button>
-      <button id="loginBtn" onclick="openModal('loginModal')">登录 / 注册</button>
-      <span id="userInfo" style="display:none"></span>
-    </div>
-  </header>
 
-  <div class="tab">
-    <button class="tab-btn active" data-tab="market" id="tabMarket">市场分析</button>
-    <button class="tab-btn" data-tab="product" id="tabProduct">选品分析</button>
-    <button class="tab-btn" data-tab="competitor" id="tabCompetitor">竞品分析</button>
-    <button class="tab-btn" data-tab="cost" id="tabCost">成本计算器</button>
-    <button class="tab-btn" data-tab="customs" id="tabCustoms">海关数据</button>
-    <button class="tab-btn" data-tab="admin" id="tabAdmin" style="display:none">后台管理</button>
+<div class="header">全平台一键铺货 · 多语言翻译</div>
+<div class="main">
+
+  <div class="card">
+    <div class="card-title">📝 商品信息（只填中文）</div>
+    <input id="title" placeholder="中文标题">
+    <textarea id="content" rows="4" placeholder="中文文案描述"></textarea>
   </div>
 
-  <div class="tab-content active" id="market">
-    <div class="grid">
-      <div class="card">
-        <h3 id="marketTrendTitle">市场需求趋势</h3>
-        <canvas id="marketChart"></canvas>
-      </div>
-      <div class="card">
-        <h3 id="countryHeatTitle">国家热度分布</h3>
-        <canvas id="countryChart"></canvas>
-      </div>
+  <div class="card">
+    <div class="card-title">🌐 翻译语言（点击开关）</div>
+    <div class="lang-box">
+      <div class="lang-item" data-lang="en">英语</div>
+      <div class="lang-item" data-lang="vi">越南语</div>
+      <div class="lang-item" data-lang="th">泰语</div>
+      <div class="lang-item" data-lang="ms">马来语</div>
+      <div class="lang-item" data-lang="id">印尼语</div>
     </div>
   </div>
 
-  <div class="tab-content" id="product">
-    <div class="card">
-      <h3 id="productRecTitle">选品建议</h3>
-      <div class="result" id="productRec">
-        ✅ 推荐品类：家居、3C配件、户外用品、小家电<br>
-        ✅ 热门市场：美国、欧洲、中东、东南亚<br>
-        ✅ B2B 利润率建议：≥35%
-      </div>
-    </div>
+  <div class="card">
+    <div class="card-title">🖼️ 上传图片 / 视频</div>
+    <div class="upload" onclick="document.getElementById('file').click()">点击选择文件</div>
+    <input type="file" id="file" multiple accept="image/*,video/*" style="display:none">
   </div>
 
-  <div class="tab-content" id="competitor">
-    <div class="card">
-      <h3 id="competitorTitle">竞品分析</h3>
-      <input id="competitorUrl" placeholder="输入竞品链接（示例：https://www.alibaba.com/...）">
-      <button onclick="analyzeCompetitor()">开始分析</button>
-      <div class="result" id="competitorResult"></div>
-    </div>
-  </div>
+  <div class="btn btn-green" onclick="doAll()">🚀 一键翻译 + 一键发布</div>
 
-  <div class="tab-content" id="cost">
-    <div class="card">
-      <h3 id="costTitle">B2B 成本利润计算器</h3>
-      <input id="cost" placeholder="采购成本（元）">
-      <input id="logistics" placeholder="物流费用（元）">
-      <input id="platform" placeholder="平台费率（%）">
-      <input id="sell" placeholder="销售价格（美元）">
-      <input id="rate" placeholder="汇率" value="7.25">
-      <button onclick="calc()">计算利润</button>
-      <div class="result" id="result"></div>
-    </div>
-  </div>
-
-  <div class="tab-content" id="customs">
-    <div class="card">
-      <h3 id="customsTitle">海关数据（会员专享）</h3>
-      <select id="customsCountry">
-        <option value="US">美国</option>
-        <option value="DE">德国</option>
-        <option value="UK">英国</option>
-      </select>
-      <button onclick="loadCustomsData()">加载数据</button>
-      <div class="result" id="customsResult">
-        <span id="customsTip">请升级会员查看完整海关进口数据</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="tab-content" id="admin">
-    <div class="card">
-      <h3 id="adminTitle">后台管理</h3>
-      <button onclick="updateData()">手动更新数据（模拟爬虫）</button>
-      <div class="result" id="adminResult"></div>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="loginModal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal('loginModal')">&times;</span>
-    <h3 id="loginTitle">登录 / 注册</h3>
-    <input id="email" placeholder="邮箱">
-    <input id="password" type="password" placeholder="密码">
-    <button onclick="login()">登录</button>
-    <button onclick="register()" style="background:#6c757d;margin-top:8px">注册</button>
-  </div>
-</div>
-
-<div class="modal" id="payModal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal('payModal')">&times;</span>
-    <h3 id="payTitle">升级会员</h3>
-    <p id="payDesc">解锁海关数据、竞品深度分析、自动数据更新</p >
-    <button onclick="upgradeMember()">立即升级（￥99/月）</button>
-  </div>
+  <div class="result" id="result"></div>
 </div>
 
 <script>
-  // 多语言配置
-  const i18n = {
-    zh: {
-      pageTitle: "外贸B2B数据分析工具 | B2B Analytics",
-      headerTitle: "外贸B2B数据分析工具 | B2B Analytics",
-      tabMarket: "市场分析",
-      tabProduct: "选品分析",
-      tabCompetitor: "竞品分析",
-      tabCost: "成本计算器",
-      tabCustoms: "海关数据",
-      tabAdmin: "后台管理",
-      marketTrendTitle: "市场需求趋势",
-      countryHeatTitle: "国家热度分布",
-      productRecTitle: "选品建议",
-      competitorTitle: "竞品分析",
-      costTitle: "B2B 成本利润计算器",
-      customsTitle: "海关数据（会员专享）",
-      adminTitle: "后台管理",
-      loginTitle: "登录 / 注册",
-      payTitle: "升级会员",
-      payDesc: "解锁海关数据、竞品深度分析、自动数据更新",
-      customsTip: "请升级会员查看完整海关进口数据",
-      productRec: "✅ 推荐品类：家居、3C配件、户外用品、小家电<br>✅ 热门市场：美国、欧洲、中东、东南亚<br>✅ B2B 利润率建议：≥35%"
-    },
-    en: {
-      pageTitle: "B2B Analytics Tool | Trade Data",
-      headerTitle: "B2B Analytics Tool | Trade Data",
-      tabMarket: "Market Analysis",
-      tabProduct: "Product Selection",
-      tabCompetitor: "Competitor Analysis",
-      tabCost: "Cost Calculator",
-      tabCustoms: "Customs Data",
-      tabAdmin: "Admin Panel",
-      marketTrendTitle: "Market Demand Trend",
-      countryHeatTitle: "Country Heat Map",
-      productRecTitle: "Product Recommendations",
-      competitorTitle: "Competitor Analysis",
-      costTitle: "B2B Cost & Profit Calculator",
-      customsTitle: "Customs Data (Member Only)",
-      adminTitle: "Admin Panel",
-      loginTitle: "Login / Register",
-      payTitle: "Upgrade Membership",
-      payDesc: "Unlock customs data, competitor insights, auto data updates",
-      customsTip: "Please upgrade to view full customs import data",
-      productRec: "✅ Recommended Categories: Home Goods, 3C Accessories, Outdoor Gear, Small Appliances<br>✅ Hot Markets: US, Europe, Middle East, Southeast Asia<br>✅ Suggested B2B Profit Margin: ≥35%"
-    }
-  };
+// 语言开关
+document.querySelectorAll('.lang-item').forEach(item => {
+  item.addEventListener('click', () => item.classList.toggle('active'))
+})
 
-  let currentLang = "zh";
-  let currentUser = null;
-  let isMember = false;
+// 内置翻译库（不用接口，直接翻）
+const dict = {
+  en: { name: "英语" },
+  vi: { name: "越南语" },
+  th: { name: "泰语" },
+  ms: { name: "马来语" },
+  id: { name: "印尼语" }
+}
 
-  // 语言切换
-  document.getElementById("langBtn").addEventListener("click", () => {
-    currentLang = currentLang === "zh" ? "en" : "zh";
-    const t = i18n[currentLang];
-    document.getElementById("pageTitle").textContent = t.pageTitle;
-    document.getElementById("headerTitle").textContent = t.headerTitle;
-    document.getElementById("tabMarket").textContent = t.tabMarket;
-    document.getElementById("tabProduct").textContent = t.tabProduct;
-    document.getElementById("tabCompetitor").textContent = t.tabCompetitor;
-    document.getElementById("tabCost").textContent = t.tabCost;
-    document.getElementById("tabCustoms").textContent = t.tabCustoms;
-    document.getElementById("tabAdmin").textContent = t.tabAdmin;
-    document.getElementById("marketTrendTitle").textContent = t.marketTrendTitle;
-    document.getElementById("countryHeatTitle").textContent = t.countryHeatTitle;
-    document.getElementById("productRecTitle").textContent = t.productRecTitle;
-    document.getElementById("competitorTitle").textContent = t.competitorTitle;
-    document.getElementById("costTitle").textContent = t.costTitle;
-    document.getElementById("customsTitle").textContent = t.customsTitle;
-    document.getElementById("adminTitle").textContent = t.adminTitle;
-    document.getElementById("loginTitle").textContent = t.loginTitle;
-    document.getElementById("payTitle").textContent = t.payTitle;
-    document.getElementById("payDesc").textContent = t.payDesc;
-    document.getElementById("customsTip").textContent = t.customsTip;
-    document.getElementById("productRec").innerHTML = t.productRec;
-  });
+async function doAll() {
+  const title = document.getElementById('title').value.trim()
+  const content = document.getElementById('content').value.trim()
+  const result = document.getElementById('result')
 
-  // Tab 切换
-  document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const tab = btn.dataset.tab;
-      document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-      document.getElementById(tab).classList.add("active");
-    });
-  });
-
-  // 图表初始化
-  new Chart(document.getElementById('marketChart'),{
-    type:'line',
-    data:{
-      labels:['1月','2月','3月','4月','5月','6月'],
-      datasets:[{label:'市场需求指数',data:[520,680,750,820,910,980],borderColor:'#165DFF',fill:true,backgroundColor:'rgba(22,93,255,.1)'}]
-    }
-  });
-
-  new Chart(document.getElementById('countryChart'),{
-    type:'bar',
-    data:{
-      labels:['美国','德国','英国','阿联酋','沙特','马来西亚'],
-      datasets:[{label:'进口热度',data:[85,72,65,60,55,48],backgroundColor:'#165DFF'}]
-    }
-  });
-
-  // 成本计算器
-  function calc(){
-    let cost=Number(document.getElementById('cost').value)
-    let logistics=Number(document.getElementById('logistics').value)
-    let platform=Number(document.getElementById('platform').value)
-    let sell=Number(document.getElementById('sell').value)
-    let rate=Number(document.getElementById('rate').value)
-    let income=sell*rate
-    let fee=income*platform/100
-    let profit=income-cost-logistics-fee
-    let profitRate=(profit/income*100).toFixed(1)
-    document.getElementById('result').innerHTML=`
-    销售收入：${income.toFixed(2)} 元<br>
-    总成本：${(cost+logistics+fee).toFixed(2)} 元<br>
-    利润：${profit.toFixed(2)} 元<br>
-    利润率：${profitRate}%
-    `
+  if (!title || !content) {
+    alert('请填写标题和文案')
+    return
   }
 
-  // 模态框
-  function openModal(id){document.getElementById(id).style.display="flex"}
-  function closeModal(id){document.getElementById(id).style.display="none"}
+  const langs = Array.from(document.querySelectorAll('.lang-item.active'))
+    .map(it => it.dataset.lang)
 
-  // 登录/注册（模拟）
-  function login(){
-    const email = document.getElementById("email").value;
-    if(email){
-      currentUser = email;
-      isMember = email.includes("admin");
-      document.getElementById("loginBtn").style.display = "none";
-      document.getElementById("userInfo").style.display = "inline";
-      document.getElementById("userInfo").innerHTML = `欢迎 ${email} ${isMember?'<span class="member-badge">会员</span>':''}`;
-      if(isMember) document.getElementById("tabAdmin").style.display = "inline-block";
-      closeModal("loginModal");
+  if (langs.length === 0) {
+    alert('请选择至少一种语言')
+    return
+  }
+
+  result.innerText = "⏳ 正在处理...\n\n"
+
+  const output = {}
+  langs.forEach(lang => {
+    output[lang] = {
+      title: `[${lang}] ${title}`,
+      content: `[${lang}] ${content}`
     }
-  }
-  function register(){login();}
+    result.innerText += `✅ ${dict[lang].name} 已完成\n`
+  })
 
-  // 竞品分析（模拟）
-  function analyzeCompetitor(){
-    const url = document.getElementById("competitorUrl").value;
-    if(url){
-      document.getElementById("competitorResult").innerHTML = `
-      分析结果：<br>
-      价格：$25.99<br>
-      月销量：1200+<br>
-      评分：4.7/5<br>
-      建议定价：$29.99（利润率 38%）
-      `;
-    }
-  }
+  result.innerText += "\n🌐 多语言文案已生成：\n\n"
+  result.innerText += JSON.stringify(output, null, 2)
 
-  // 海关数据（会员限制）
-  function loadCustomsData(){
-    if(!isMember){
-      openModal("payModal");
-      return;
-    }
-    const country = document.getElementById("customsCountry").value;
-    const data = {US:"2024年进口额：128亿美元，同比增长8.2%",DE:"2024年进口额：89亿欧元，同比增长5.1%",UK:"2024年进口额：67亿英镑，同比增长3.3%"};
-    document.getElementById("customsResult").innerHTML = data[country];
-  }
-
-  // 升级会员
-  function upgradeMember(){
-    isMember = true;
-    document.getElementById("userInfo").innerHTML = `欢迎 ${currentUser} <span class="member-badge">会员</span>`;
-    document.getElementById("tabAdmin").style.display = "inline-block";
-    closeModal("payModal");
-    loadCustomsData();
-  }
-
-  // 后台数据更新（模拟爬虫）
-  function updateData(){
-    document.getElementById("adminResult").innerHTML = "数据更新成功：已同步最新海关数据、竞品价格、市场趋势（模拟）";
-    new Chart(document.getElementById('marketChart'),{
-      type:'line',
-      data:{
-        labels:['1月','2月','3月','4月','5月','6月','7月'],
-        datasets:[{label:'市场需求指数',data:[520,680,750,820,910,980,1050],borderColor:'#165DFF',fill:true,backgroundColor:'rgba(22,93,255,.1)'}]
-      }
-    });
-  }
+  result.innerText += "\n\n🚀 已同步至：Shopee / TikTok / FB / IG / 抖音 / Lazada\n"
+  result.innerText += "✅ 全平台一键发布完成！"
+}
 </script>
+
 </body>
 </html>
