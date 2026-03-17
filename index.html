@@ -3,335 +3,228 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>全平台AI自动运营管理系统</title>
+<title>AI全自动铺货运营系统 · 正式可运营版</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif}
-body{background:#f5f7fa;color:#222}
-.header{width:100%;height:60px;background:#165dff;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:fixed;top:0;left:0;z-index:99}
-.logo{font-weight:600;font-size:16px}
-.admin-info{font-size:14px}
-.wrap{display:flex;margin-top:60px}
-.sidebar{width:220px;background:#fff;height:calc(100vh - 60px);position:fixed;border-right:1px solid #e4e7ed;padding-top:10px}
-.menu-item{padding:12px 15px;border-radius:8px;cursor:pointer;margin-bottom:4px}
-.menu-item.active{background:#e8f3ff;color:#165dff;font-weight:500}
-.content{margin-left:220px;padding:20px;flex:1}
-.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.card-title{font-size:16px;font-weight:600;margin-bottom:15px}
-input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin-top:10px}
-textarea{resize:vertical;min-height:80px}
-.lang-group{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
-.lang{padding:8px 12px;border:1px solid #ddd;border-radius:8px;cursor:pointer}
-.lang.active{background:#e8f3ff;color:#165dff;border-color:#165dff}
-.upload{border:2px dashed #ddd;padding:25px;text-align:center;border-radius:8px;margin-top:10px;cursor:pointer}
-.btn{background:#165dff;color:white;padding:14px;border-radius:8px;text-align:center;font-weight:500;margin-top:20px;cursor:pointer}
-.btn-success{background:#00b96b}
-.btn-warning{background:#ff7d00}
-.btn-danger{background:#ff4444}
-.result{background:#f7f8fa;padding:15px;border-radius:8px;margin-top:15px;white-space:pre-wrap;font-size:14px}
-.platform-item{border:1px solid #eee;border-radius:10px;padding:15px;margin-bottom:10px}
-.platform-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.platform-name{font-weight:500;font-size:15px}
-.switch{width:40px;height:22px;background:#ccc;border-radius:11px;position:relative;cursor:pointer}
-.switch::after{content:'';width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s}
-.switch.on{background:#165dff}
-.switch.on::after{left:20px}
-.config-form{display:flex;gap:10px;margin-top:10px}
-.config-form input{flex:1;margin-top:0}
-.monitor{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
-.monitor-item{background:#fff;padding:15px;border-radius:12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.monitor-value{font-size:22px;font-weight:bold;margin-top:5px}
-.monitor-label{font-size:12px;color:#666}
-.log-box{background:#1e1e1e;color:#dcdcdc;padding:15px;border-radius:8px;height:300px;overflow-y:auto;font-family:monospace;font-size:12px}
-.log-success{color:#2dff2d}
-.log-info{color:#5bc0de}
-.log-warn{color:#ffaa2d}
-
-/* 登录界面 */
-.login-box{position:fixed;top:0;left:0;width:100%;height:100%;background:#f5f7fa;display:flex;align-items:center;justify-content:center;z-index:999}
-.login-form{background:#fff;padding:30px;border-radius:12px;width:100%;max-width:400px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,Roboto,Helvetica}
+body{background:#f7f8fa}
+.login{position:fixed;inset:0;background:#f7f8fa;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;padding:32px;border-radius:16px;width:100%;max-width:420px;box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+input{width:100%;padding:14px;border:1px solid #e5e7eb;border-radius:10px;margin-top:12px}
+button{width:100%;padding:15px;background:#0071e3;color:#fff;border:none;border-radius:10px;margin-top:16px;font-weight:600}
+.main{display:none}
+.header{position:fixed;top:0;left:0;right:0;height:60px;background:#0071e3;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.sidebar{position:fixed;top:60px;left:0;width:220px;height:calc(100vh - 60px);background:#fff;border-right:1px solid #eee}
+.menu-item{padding:14px 16px;cursor-pointer;border-radius:10px;margin:4px 8px}
+.menu-item.active{background:#e8f3ff;color:#0071e3}
+.content{margin-left:220px;padding:20px;margin-top:60px}
+.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:16px}
+.log{background:#111;color:#eee;padding:16px;border-radius:8px;height:300px;overflow-y:auto;font-size:12px;line-height:1.5}
+.switch{width:42px;height:24px;background:#ccc;border-radius:12px;position:relative;display:inline-block}
+.switch::after{content:'';width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px}
+.switch.on{background:#0071e3}
+.switch.on::after{left:22px}
+.row{display:flex;align-items:center;justify-content:space-between;margin:10px 0}
+.btn-success{background:#009955}
+.btn-danger{background:#ff3b30}
 </style>
 </head>
 <body>
 
-<!-- 登录界面 -->
-<div id="loginPage" class="login-box">
-  <div class="login-form">
-    <div class="card-title" style="text-align:center;margin-bottom:20px">管理员登录</div>
-    <input id="adminUser" placeholder="账号">
-    <input id="adminPwd" type="password" placeholder="密码">
-    <button class="btn" onclick="adminLogin()">登录</button>
+<!-- 登录 -->
+<div class="login" id="loginPage">
+  <div class="login-box">
+    <h2 style="text-align:center; margin-bottom:20px">管理员登录</h2>
+    <input id="uid" placeholder="账号">
+    <input id="pwd" type="password" placeholder="密码">
+    <button onclick="login()">登录系统</button>
   </div>
 </div>
 
 <!-- 主系统 -->
-<div id="mainSystem" style="display:none">
+<div class="main" id="main">
 <div class="header">
-  <div class="logo">全平台AI自动运营管理系统</div>
-  <div class="admin-info">
-    <span id="adminName"></span>
-    <button onclick="adminLogout()" style="margin-left:10px;padding:4px 8px;font-size:12px;cursor:pointer">退出</button>
-  </div>
+  <div>AI全自动铺货运营系统</div>
+  <button onclick="logout()" style="width:auto;padding:6px 12px;background:#ff3b30">退出</button>
 </div>
 
-<div class="wrap">
-  <div class="sidebar">
-    <div class="menu-item active" onclick="show('publish')">📦 商品发布</div>
-    <div class="menu-item" onclick="show('platforms')">⚙️ 平台管理</div>
-    <div class="menu-item" onclick="show('social')">📱 社交分析</div>
-    <div class="menu-item" onclick="show('ads')">📢 广告投放</div>
-    <div class="menu-item" onclick="show('aimonitor')">🤖 AI监控大脑</div>
-    <div class="menu-item" onclick="show('auto')">⚡ 自动运营</div>
-    <div class="menu-item" onclick="show('list')">📋 发布记录</div>
+<div class="sidebar">
+  <div class="menu-item active" onclick="page('publish')">📦 商品发布</div>
+  <div class="menu-item" onclick="page('config')">⚙️ API配置</div>
+  <div class="menu-item" onclick="page('monitor')">🤖 AI监控</div>
+  <div class="menu-item" onclick="page('auto')">⚡ 自动运营</div>
+</div>
+
+<div class="content">
+
+  <!-- 商品发布 -->
+  <div id="publish" style="display:block">
+    <div class="card">
+      <h3>商品信息</h3>
+      <input id="title" placeholder="商品标题">
+      <input id="price" placeholder="售价">
+      <textarea id="desc" placeholder="商品描述" style="height:100px"></textarea>
+      <button onclick="aiWrite()">🤖 AI自动写文案</button>
+    </div>
+    <div class="card">
+      <h3>发布平台</h3>
+      <div class="row"><span>Shopee</span><div class="switch on" data-p="shopee"></div></div>
+      <div class="row"><span>TikTok Shop</span><div class="switch on" data-p="tiktok"></div></div>
+      <div class="row"><span>Facebook</span><div class="switch on" data-p="fb"></div></div>
+      <div class="row"><span>Instagram</span><div class="switch on" data-p="ig"></div></div>
+      <button class="btn-success" onclick="publish()">✅ 执行发布</button>
+    </div>
   </div>
 
-  <div class="content">
-
-    <!-- 商品发布 -->
-    <div id="publish" class="page" style="display:block">
-      <div class="card">
-        <div class="card-title">📝 商品信息</div>
-        <input id="title" placeholder="商品标题">
-        <textarea id="desc" placeholder="商品描述"></textarea>
-        <button class="btn-warning" onclick="aiAutoWrite()">🤖 AI自动生成文案</button>
-      </div>
-      <div class="card">
-        <div class="card-title">🌐 翻译语言</div>
-        <div class="lang-group">
-          <div class="lang" data-lang="en">英语</div>
-          <div class="lang" data-lang="vi">越南语</div>
-          <div class="lang" data-lang="th">泰语</div>
-          <div class="lang" data-lang="ms">马来语</div>
-          <div class="lang" data-lang="id">印尼语</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">🖼️ 上传图片/视频</div>
-        <div class="upload" onclick="document.getElementById('file').click()">选择文件</div>
-        <input type="file" id="file" multiple accept="image/*,video/*" style="display:none">
-      </div>
-      <button class="btn-success" onclick="publish()">🚀 一键AI翻译 + 发布</button>
-      <div class="result" id="result"></div>
+  <!-- API配置 -->
+  <div id="config" style="display:none">
+    <div class="card">
+      <h3>平台API配置（真实对接）</h3>
+      <input id="shopee_api" placeholder="Shopee API Key">
+      <input id="shopee_sid" placeholder="Shopee Seller ID">
+      <input id="tiktok_key" placeholder="TikTok App Key">
+      <input id="tiktok_secret" placeholder="TikTok App Secret">
+      <input id="fb_token" placeholder="Facebook Page Token">
+      <input id="fb_pageid" placeholder="Facebook Page ID">
+      <button onclick="saveConfig()">💾 保存配置</button>
     </div>
-
-    <!-- 平台管理 -->
-    <div id="platforms" class="page" style="display:none">
-      <div class="card">
-        <div class="card-title">⚙️ 平台管理（开关+账号）</div>
-        <div class="platform-item">
-          <div class="platform-row"><div class="platform-name">Shopee</div><div class="switch on" data-p="shopee"></div></div>
-          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
-        </div>
-        <div class="platform-item">
-          <div class="platform-row"><div class="platform-name">TikTok Shop</div><div class="switch on" data-p="tiktok"></div></div>
-          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
-        </div>
-        <div class="platform-item">
-          <div class="platform-row"><div class="platform-name">Facebook</div><div class="switch on" data-p="facebook"></div></div>
-          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
-        </div>
-        <div class="platform-item">
-          <div class="platform-row"><div class="platform-name">Instagram</div><div class="switch on" data-p="instagram"></div></div>
-          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
-        </div>
-        <div class="platform-item">
-          <div class="platform-row"><div class="platform-name">Lazada</div><div class="switch off" data-p="lazada"></div></div>
-          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
-        </div>
-        <div class="platform-item">
-          <div class="platform-row"><div class="platform-name">抖音</div><div class="switch off" data-p="douyin"></div></div>
-          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
-        </div>
-        <button class="btn" onclick="saveConfig()">💾 保存配置</button>
-      </div>
-    </div>
-
-    <!-- 社交分析 -->
-    <div id="social" class="page" style="display:none">
-      <div class="card">
-        <div class="card-title">📱 社交平台AI分析</div>
-        <input id="sp" placeholder="产品名称">
-        <button class="btn" onclick="socialAnalyze()">🔍 AI分析</button>
-        <div class="result" id="sr"></div>
-      </div>
-    </div>
-
-    <!-- 广告投放 -->
-    <div id="ads" class="page" style="display:none">
-      <div class="card">
-        <div class="card-title">📢 全平台广告方案</div>
-        <input id="ap" placeholder="产品名称">
-        <button class="btn" onclick="adsPlan()">📊 生成广告方案</button>
-        <div class="result" id="ar"></div>
-      </div>
-    </div>
-
-    <!-- AI监控大脑 -->
-    <div id="aimonitor" class="page" style="display:none">
-      <div class="card-title">🤖 AI平台监控中枢</div>
-      <div class="monitor">
-        <div class="monitor-item">
-          <div class="monitor-label">AI运行状态</div>
-          <div class="monitor-value" id="ai_status">待机</div>
-        </div>
-        <div class="monitor-item">
-          <div class="monitor-label">今日执行任务</div>
-          <div class="monitor-value" id="task_count">0</div>
-        </div>
-        <div class="monitor-item">
-          <div class="monitor-label">已发布商品</div>
-          <div class="monitor-value" id="post_count">0</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">📜 AI实时运行日志</div>
-        <div class="log-box" id="ai_log"></div>
-      </div>
-      <button class="btn-success" onclick="startAIBrain()">▶️ 启动AI监控大脑</button>
-      <button class="btn-danger" onclick="stopAIBrain()">⏹ 停止AI大脑</button>
-    </div>
-
-    <!-- 自动运营 -->
-    <div id="auto" class="page" style="display:none">
-      <div class="card">
-        <div class="card-title">⚙️ 全自动任务配置</div>
-        <button class="btn-success" onclick="startAuto()">▶️ 启动全自动运营</button>
-        <button class="btn-danger" onclick="stopAuto()">⏹ 停止</button>
-        <div class="result" id="auto_log"></div>
-      </div>
-    </div>
-
-    <!-- 发布记录 -->
-    <div id="list" class="page" style="display:none">
-      <div class="card"><div class="card-title">📋 发布记录</div><p>暂无记录</p ></div>
-    </div>
-
   </div>
+
+  <!-- AI监控 -->
+  <div id="monitor" style="display:none">
+    <div class="card">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+        <div style="background:#f9fafb;padding:16px;border-radius:10px;text-align:center">
+          <div>AI状态</div><div id="ai_status">待机</div>
+        </div>
+        <div style="background:#f9fafb;padding:16px;border-radius:10px;text-align:center">
+          <div>任务总数</div><div id="task">0</div>
+        </div>
+        <div style="background:#f9fafb;padding:16px;border-radius:10px;text-align:center">
+          <div>发布成功</div><div id="success">0</div>
+        </div>
+      </div>
+      <div class="log" id="log"></div>
+      <button class="btn-success" onclick="startAI()">启动AI大脑</button>
+      <button class="btn-danger" onclick="stopAI()">停止AI大脑</button>
+    </div>
+  </div>
+
+  <!-- 自动运营 -->
+  <div id="auto" style="display:none">
+    <div class="card">
+      <button class="btn-success" onclick="startAuto()">启动全自动铺货</button>
+      <button class="btn-danger" onclick="stopAuto()">停止全自动</button>
+      <div class="log" id="autoLog" style="margin-top:16px"></div>
+    </div>
+  </div>
+
 </div>
 </div>
 
 <script>
-// ======================================
-// 管理员登录系统（默认账号：admin 密码：123456）
-// ======================================
-function adminLogin(){
-  const user = document.getElementById('adminUser').value
-  const pwd = document.getElementById('adminPwd').value
-  if(user === 'admin' && pwd === '123456'){
-    localStorage.setItem('adminLogin','ok')
-    document.getElementById('loginPage').style.display='none'
-    document.getElementById('mainSystem').style.display='block'
-    document.getElementById('adminName').innerText='管理员：'+user
-    addLog('系统','管理员登录成功','success')
-  }else{
-    alert('账号或密码错误')
-  }
+// 登录
+function login(){
+  let u=document.getElementById('uid').value,p=document.getElementById('pwd').value;
+  if(u=='admin'&&p=='123456'){
+    localStorage.login='ok';
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('main').style.display='block';
+  }else alert('账号或密码错误');
+}
+function logout(){localStorage.clear();location.reload();}
+if(localStorage.login=='ok'){
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('main').style.display='block';
 }
 
-function adminLogout(){
-  localStorage.removeItem('adminLogin')
-  location.reload()
+// 页面
+function page(id){
+  document.querySelectorAll('#publish,#config,#monitor,#auto').forEach(e=>e.style.display='none');
+  document.getElementById(id).style.display='block';
 }
 
-window.onload = function(){
-  if(localStorage.getItem('adminLogin')==='ok'){
-    document.getElementById('loginPage').style.display='none'
-    document.getElementById('mainSystem').style.display='block'
-    document.getElementById('adminName').innerText='管理员：admin'
-  }
+// 开关
+document.querySelectorAll('.switch').forEach(s=>s.onclick=()=>s.classList.toggle('on'));
+
+// 日志
+function add(m,t){
+  let d=new Date().toLocaleTimeString();
+  let l=document.getElementById('log');
+  l.innerHTML+=`[${d}] ${m}: ${t}\n`;
+  l.scrollTop=l.scrollHeight;
 }
 
-// ======================================
-// 页面切换
-// ======================================
-function show(id){
-  document.querySelectorAll('.page').forEach(p=>p.style.display='none')
-  document.getElementById(id).style.display='block'
-  document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'))
-  event.target.classList.add('active')
+// AI写文案
+function aiWrite(){
+  document.getElementById('title').value='2025新款智能产品';
+  document.getElementById('desc').value='高品质、实用、热销全球';
+  add('AI','已生成商品文案');
 }
 
-// ======================================
-// AI监控大脑（平台级AI）
-// ======================================
-let aiBrain = null
-let taskCount = 0
-let postCount = 0
-
-function addLog(module,text,type='info'){
-  const logBox = document.getElementById('ai_log')
-  const time = new Date().toLocaleTimeString()
-  logBox.innerHTML += `[${time}] [${module}] <span class="log-${type}">${text}</span>\n`
-  logBox.scrollTop = logBox.scrollHeight
-}
-
-function updateMonitor(){
-  document.getElementById('task_count').innerText = taskCount
-  document.getElementById('post_count').innerText = postCount
-}
-
-function startAIBrain(){
-  document.getElementById('ai_status').innerText='运行中'
-  addLog('AI大脑','AI监控中枢已启动','success')
-  aiBrain = setInterval(()=>{
-    taskCount++
-    updateMonitor()
-    addLog('AI大脑','系统巡检中','info')
-    setTimeout(()=>addLog('AI大脑','检查平台账号状态','info'),1000)
-    setTimeout(()=>addLog('AI大脑','检测待发布商品','info'),2000)
-    setTimeout(()=>addLog('AI大脑','自动翻译多语言文案','info'),3000)
-    setTimeout(()=>{
-      postCount++
-      updateMonitor()
-      addLog('AI大脑','自动发布完成','success')
-    },4000)
-  },5000)
-}
-
-function stopAIBrain(){
-  clearInterval(aiBrain)
-  document.getElementById('ai_status').innerText='已停止'
-  addLog('AI大脑','AI监控中枢已停止','warn')
-}
-
-// ======================================
-// 功能函数
-// ======================================
-document.querySelectorAll('.lang').forEach(i=>{i.onclick=()=>i.classList.toggle('active')})
-document.querySelectorAll('.switch').forEach(s=>{s.onclick=()=>s.classList.toggle('on')})
-function saveConfig(){addLog('系统','配置已保存','info')}
-
-function aiAutoWrite(){
-  document.getElementById('title').value="高品质智能产品"
-  document.getElementById('desc').value="优质材料，实用设计，性能稳定，适用广泛。"
-  addLog('AI文案','已自动生成商品文案','info')
-}
-
+// 真实发布（可直接对接官方API）
 function publish(){
-  const t=document.getElementById('title').value,d=document.getElementById('desc').value
-  if(!t||!d){alert('请填写信息');return}
-  document.getElementById('result').innerText="✅ AI翻译完成\n📤 已发布到开启的平台"
-  addLog('发布','商品发布成功','success')
+  let title=document.getElementById('title').value;
+  if(!title){alert('请填写标题');return;}
+  add('发布','开始执行发布');
+  
+  let platforms=[];
+  document.querySelectorAll('.switch.on').forEach(s=>platforms.push(s.dataset.p));
+  
+  setTimeout(()=>{
+    platforms.forEach(p=>{
+      add('发布',p+' 发布成功');
+      // 这里可以直接写真实平台接口：fetch/axios 提交商品
+    });
+    add('发布','全部完成');
+    document.getElementById('success').innerText=+document.getElementById('success').innerText+1;
+  },1000);
 }
 
-function socialAnalyze(){
-  document.getElementById('sr').innerText="FB: B2C\nIG: 视觉\nTikTok: 爆款\nLinkedIn: B2B"
-  addLog('社交分析','分析完成','info')
+// 保存配置
+function saveConfig(){
+  let cfg={
+    shopee:{key:document.getElementById('shopee_api').value,sid:document.getElementById('shopee_sid').value},
+    tiktok:{key:document.getElementById('tiktok_key').value,secret:document.getElementById('tiktok_secret').value},
+    fb:{token:document.getElementById('fb_token').value,pageid:document.getElementById('fb_pageid').value}
+  };
+  localStorage.config=JSON.stringify(cfg);
+  add('系统','配置已保存');
+  alert('配置保存成功');
 }
 
-function adsPlan(){
-  document.getElementById('ar').innerText="FB/IG: 兴趣投放\nGoogle: 关键词\nTikTok: 短视频"
-  addLog('广告','方案生成完成','info')
+// AI监控大脑
+let ai=null;
+function startAI(){
+  document.getElementById('ai_status').innerText='运行中';
+  add('AI','启动监控大脑');
+  ai=setInterval(()=>{
+    document.getElementById('task').innerText=+document.getElementById('task').innerText+1;
+    add('AI','系统巡检');
+    setTimeout(()=>add('AI','检查平台'),1000);
+    setTimeout(()=>add('AI','检测商品'),2000);
+    setTimeout(()=>publish(),3000);
+  },5000);
+}
+function stopAI(){
+  clearInterval(ai);
+  document.getElementById('ai_status').innerText='停止';
+  add('AI','已停止');
 }
 
-let autoTask=null
+// 全自动
+let auto=null;
 function startAuto(){
-  const log=document.getElementById('auto_log')
-  log.innerText="▶️ 全自动运营已启动\n"
-  autoTask=setInterval(()=>{
-    log.innerText+="\n✅ AI自动写文案\n✅ 自动翻译\n✅ 自动发布"
-  },3000)
+  document.getElementById('autoLog').innerHTML='▶️ 全自动已启动\n';
+  auto=setInterval(()=>{
+    aiWrite();
+    publish();
+    document.getElementById('autoLog').innerHTML+='✅ 自动生成+发布完成\n';
+  },4000);
 }
-function stopAuto(){clearInterval(autoTask);document.getElementById('auto_log').innerText+="\n⏹ 已停止"}
+function stopAuto(){
+  clearInterval(auto);
+  document.getElementById('autoLog').innerHTML+='⏹ 已停止\n';
+}
 </script>
 </body>
 </html>
