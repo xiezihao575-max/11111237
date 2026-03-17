@@ -3,15 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI全自动铺货运营系统 · 正式可运营版</title>
+<title>AI全自动铺货运营系统</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,Roboto,Helvetica}
 body{background:#f7f8fa}
-.login{position:fixed;inset:0;background:#f7f8fa;display:flex;align-items:center;justify-content:center}
-.login-box{background:#fff;padding:32px;border-radius:16px;width:100%;max-width:420px;box-shadow:0 4px 20px rgba(0,0,0,0.08)}
-input{width:100%;padding:14px;border:1px solid #e5e7eb;border-radius:10px;margin-top:12px}
-button{width:100%;padding:15px;background:#0071e3;color:#fff;border:none;border-radius:10px;margin-top:16px;font-weight:600}
-.main{display:none}
 .header{position:fixed;top:0;left:0;right:0;height:60px;background:#0071e3;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
 .sidebar{position:fixed;top:60px;left:0;width:220px;height:calc(100vh - 60px);background:#fff;border-right:1px solid #eee}
 .menu-item{padding:14px 16px;cursor-pointer;border-radius:10px;margin:4px 8px}
@@ -26,25 +21,14 @@ button{width:100%;padding:15px;background:#0071e3;color:#fff;border:none;border-
 .row{display:flex;align-items:center;justify-content:space-between;margin:10px 0}
 .btn-success{background:#009955}
 .btn-danger{background:#ff3b30}
+input,textarea{width:100%;padding:14px;border:1px solid #e5e7eb;border-radius:10px;margin-top:12px}
+button{width:100%;padding:15px;background:#0071e3;color:#fff;border:none;border-radius:10px;margin-top:16px;font-weight:600}
 </style>
 </head>
 <body>
 
-<!-- 登录 -->
-<div class="login" id="loginPage">
-  <div class="login-box">
-    <h2 style="text-align:center; margin-bottom:20px">管理员登录</h2>
-    <input id="uid" placeholder="账号">
-    <input id="pwd" type="password" placeholder="密码">
-    <button onclick="login()">登录系统</button>
-  </div>
-</div>
-
-<!-- 主系统 -->
-<div class="main" id="main">
 <div class="header">
   <div>AI全自动铺货运营系统</div>
-  <button onclick="logout()" style="width:auto;padding:6px 12px;background:#ff3b30">退出</button>
 </div>
 
 <div class="sidebar">
@@ -119,31 +103,15 @@ button{width:100%;padding:15px;background:#0071e3;color:#fff;border:none;border-
   </div>
 
 </div>
-</div>
 
 <script>
-// 登录
-function login(){
-  let u=document.getElementById('uid').value,p=document.getElementById('pwd').value;
-  if(u=='admin'&&p=='123456'){
-    localStorage.login='ok';
-    document.getElementById('loginPage').style.display='none';
-    document.getElementById('main').style.display='block';
-  }else alert('账号或密码错误');
-}
-function logout(){localStorage.clear();location.reload();}
-if(localStorage.login=='ok'){
-  document.getElementById('loginPage').style.display='none';
-  document.getElementById('main').style.display='block';
-}
-
-// 页面
+// 页面切换
 function page(id){
   document.querySelectorAll('#publish,#config,#monitor,#auto').forEach(e=>e.style.display='none');
   document.getElementById(id).style.display='block';
 }
 
-// 开关
+// 平台开关
 document.querySelectorAll('.switch').forEach(s=>s.onclick=()=>s.classList.toggle('on'));
 
 // 日志
@@ -161,7 +129,7 @@ function aiWrite(){
   add('AI','已生成商品文案');
 }
 
-// 真实发布（可直接对接官方API）
+// 发布
 function publish(){
   let title=document.getElementById('title').value;
   if(!title){alert('请填写标题');return;}
@@ -173,7 +141,6 @@ function publish(){
   setTimeout(()=>{
     platforms.forEach(p=>{
       add('发布',p+' 发布成功');
-      // 这里可以直接写真实平台接口：fetch/axios 提交商品
     });
     add('发布','全部完成');
     document.getElementById('success').innerText=+document.getElementById('success').innerText+1;
