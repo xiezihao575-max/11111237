@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gemini x Lobster x OpenClaw | 三栖一体化 ERP 终极版</title>
+<title>GLO ERP | Gemini x Lobster x OpenClaw 三栖旗舰版</title>
 <style>
 :root { 
     --primary: #0071e3; --success: #34c759; --warning: #ff9500; --danger: #ff3b30; 
     --dark: #1d1d1f; --gray: #86868b; --light: #f5f5f7; --glass: rgba(255, 255, 255, 0.8);
-    --lobster: #ff5733; --openclaw: #00ffd0; /* OpenClaw 青绿色象征感知 */
-    --ai-glow: 0 0 20px rgba(0, 255, 208, 0.4);
+    --lobster: #ff5733; --openclaw: #00ffd0; 
+    --ai-glow: 0 0 20px rgba(0, 255, 208, 0.3);
 }
 
 *{margin:0;padding:0;box-sizing:border-box;font-family: "SF Pro Display", "PingFang SC", system-ui;}
 
 body { background: #eef2f7; color: var(--dark); overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
 
-/* 增强导航栏 */
+/* 头部导航 */
 .header {
     height: 64px; background: var(--glass); backdrop-filter: blur(25px);
     border-bottom: 1px solid rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between;
@@ -24,22 +24,22 @@ body { background: #eef2f7; color: var(--dark); overflow: hidden; display: flex;
 }
 
 .logo {
-    font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 10px;
+    font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px;
     background: linear-gradient(135deg, var(--primary), var(--lobster), var(--openclaw));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
-.ai-group { display: flex; gap: 15px; align-items: center; }
-.ai-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; color: #fff; font-weight: bold; }
-.badge-gemini { background: var(--primary); }
-.badge-lobster { background: var(--lobster); }
-.badge-openclaw { background: var(--openclaw); color: var(--dark); }
+.ai-group { display: flex; gap: 12px; align-items: center; }
+.ai-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; color: #fff; font-weight: bold; transition: 0.3s; }
+.badge-gemini { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+.badge-lobster { background: var(--lobster); box-shadow: 0 0 10px var(--lobster); }
+.badge-openclaw { background: var(--openclaw); color: var(--dark); box-shadow: 0 0 10px var(--openclaw); }
 
-/* 布局 */
+/* 布局控制 */
 .container { display: flex; flex: 1; overflow: hidden; }
 
-/* 侧边栏升级 */
-.sidebar { width: 260px; background: #fff; border-right: 1px solid #d2d2d7; padding: 24px 12px; }
+/* 侧边栏 */
+.sidebar { width: 260px; background: #fff; border-right: 1px solid #d2d2d7; padding: 24px 12px; overflow-y: auto; }
 .menu-group { margin-bottom: 28px; }
 .menu-label { font-size: 11px; color: var(--gray); text-transform: uppercase; margin-left: 14px; margin-bottom: 10px; font-weight: 700; letter-spacing: 1px; }
 
@@ -52,70 +52,73 @@ body { background: #eef2f7; color: var(--dark); overflow: hidden; display: flex;
 
 /* 内容区 */
 .content { flex: 1; padding: 32px; overflow-y: auto; scroll-behavior: smooth; }
-.section { display: none; animation: fadeIn 0.4s ease; }
+.section { display: none; animation: slideIn 0.4s ease; }
 .section.active { display: block; }
 
-@keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-.card {
-    background: #fff; border-radius: 24px; padding: 28px; margin-bottom: 24px;
-    border: 1px solid rgba(0,0,0,0.05); transition: 0.3s;
-}
-.card:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
-
+.card { background: #fff; border-radius: 24px; padding: 28px; margin-bottom: 24px; border: 1px solid rgba(0,0,0,0.05); position: relative; }
 .openclaw-border { border-top: 4px solid var(--openclaw); }
+.lobster-border { border-left: 5px solid var(--lobster); }
 
-/* 数据展示 */
+/* 统计与雷达 */
 .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px; }
-.stat-card { background: #fff; border-radius: 20px; padding: 24px; position: relative; overflow: hidden; }
-.stat-val { font-size: 28px; font-weight: 800; margin-top: 10px; }
+.stat-card { background: #fff; border-radius: 20px; padding: 24px; border: 1px solid #eee; transition: 0.3s; }
+.stat-card:hover { transform: translateY(-5px); }
+.stat-val { font-size: 26px; font-weight: 800; margin-top: 8px; }
 
-/* OpenClaw 动态监控台 */
-.console { background: #0c0c0e; color: #00ffd0; padding: 20px; border-radius: 18px; height: 380px; overflow-y: auto; font-family: 'Consolas', monospace; font-size: 12px; line-height: 1.8; }
-.line-claw { color: var(--openclaw); }
-.line-lobster { color: var(--lobster); }
-.line-gemini { color: var(--primary); }
+#claw_radar { height: 160px; background: #0c0c0e; border-radius: 18px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.radar-sweep { position: absolute; width: 100%; height: 100%; background: conic-gradient(from 0deg, transparent, var(--openclaw)); opacity: 0.15; animation: sweep 4s infinite linear; }
+@keyframes sweep { to { transform: rotate(360deg); } }
 
-button { width: 100%; padding: 18px; background: var(--dark); color: #fff; border: none; border-radius: 14px; margin-top: 20px; font-weight: 700; cursor: pointer; transition: 0.3s; }
-button:hover { background: var(--primary); box-shadow: var(--ai-glow); }
+/* 交互控制台 */
+.console { background: #1c1c1e; color: #f5f5f7; padding: 20px; border-radius: 18px; height: 320px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.8; border: 1px solid #333; }
+.log-claw { color: var(--openclaw); text-shadow: 0 0 5px var(--openclaw); }
+.log-lobster { color: var(--lobster); }
+.log-gemini { color: var(--primary); }
 
-#claw_radar { height: 150px; background: #f0f3f8; border-radius: 14px; margin-top: 15px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-.radar-circle { position: absolute; border: 1px solid var(--openclaw); border-radius: 50%; animation: radar 3s infinite linear; }
+.control-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+button { width: 100%; padding: 16px; background: var(--lobster); color: #fff; border: none; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 14px; }
+button:hover { filter: brightness(1.2); transform: scale(1.02); }
+button.claw-btn { background: #000; border: 1px solid var(--openclaw); color: var(--openclaw); }
+button.gemini-btn { background: var(--primary); }
 
-@keyframes radar { from { width: 0; height: 0; opacity: 1; } to { width: 300px; height: 300px; opacity: 0; } }
+/* 动态列表 */
+.item-list { margin-top: 15px; }
+.item-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
 
+input { width: 100%; padding: 14px; border: 1px solid #d2d2d7; border-radius: 12px; margin-top: 10px; background: #f9f9fb; font-size: 13px; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <div class="logo">🛰️ G-L-O ERP FLAGSHIP</div>
+    <div class="logo">🚀 G-L-O ERP ULTIMATE</div>
     <div class="ai-group">
-        <span class="ai-badge badge-gemini">Gemini: Stable</span>
-        <span class="ai-badge badge-lobster">Lobster: Active</span>
-        <span class="ai-badge badge-openclaw">OpenClaw: Scanning</span>
+        <span class="ai-badge badge-gemini" id="status_gemini">Gemini: Ready</span>
+        <span class="ai-badge badge-lobster" id="status_lobster">Lobster: Idle</span>
+        <span class="ai-badge badge-openclaw" id="status_claw">OpenClaw: Passive</span>
     </div>
     <div class="status-bar">
-        <div>Rate: <span id="exchange_val">7.2145</span></div>
-        <div id="clock">00:00:00</div>
+        <div id="clock" style="font-weight: bold; letter-spacing: 1px;">00:00:00</div>
     </div>
 </div>
 
 <div class="container">
     <div class="sidebar">
         <div class="menu-group">
-            <div class="menu-label">三栖指挥</div>
-            <div class="menu-item active" onclick="page('dashboard')">📊 全维运营看板</div>
-            <div class="menu-item" onclick="page('openclaw_hq')">🛰️ OpenClaw 探测中心</div>
+            <div class="menu-label">核心控制</div>
+            <div class="menu-item active" onclick="page('dashboard')">📊 实时经营看板</div>
+            <div class="menu-item" onclick="page('claw_hq')">🛰️ OpenClaw 终端</div>
         </div>
         <div class="menu-group">
-            <div class="menu-label">业务集群</div>
-            <div class="menu-item" onclick="page('ad_manage')">📢 智能投放 (Lobster)</div>
-            <div class="menu-item" onclick="page('spider')">🌍 深度穿透爬虫</div>
+            <div class="menu-label">AI 运营</div>
+            <div class="menu-item" onclick="page('ad_center')">📢 智能投放中心</div>
+            <div class="menu-item" onclick="page('spider')">🌍 全球选品爬虫</div>
         </div>
         <div class="menu-group">
-            <div class="menu-label">系统维护</div>
-            <div class="menu-item" onclick="page('monitor')">🤖 自愈内核 (Gemini)</div>
+            <div class="menu-label">系统层</div>
+            <div class="menu-item" onclick="page('system')">🧬 内核自进化</div>
         </div>
     </div>
 
@@ -123,51 +126,48 @@ button:hover { background: var(--primary); box-shadow: var(--ai-glow); }
 
         <div id="dashboard" class="section active">
             <div class="stat-grid">
-                <div class="stat-card"><div>实时 GMV</div><div class="stat-val" style="color:var(--lobster)" id="gmv_val">$24,105.82</div></div>
-                <div class="stat-card"><div>Claw 拦截风险</div><div class="stat-val" style="color:var(--openclaw)">12</div></div>
-                <div class="stat-card"><div>Gemini 优化度</div><div class="stat-val">99.8%</div></div>
-                <div class="stat-card"><div>跨境延迟</div><div class="stat-val" style="color:var(--success)">14ms</div></div>
+                <div class="stat-card"><div>今日流水 (USD)</div><div class="stat-val" style="color:var(--lobster)" id="gmv_val">$24,105.82</div></div>
+                <div class="stat-card"><div>Claw 拦截风险</div><div class="stat-val" style="color:var(--openclaw)" id="risk_val">0</div></div>
+                <div class="stat-card"><div>Gemini 优化数</div><div class="stat-val" id="opt_count">142</div></div>
+                <div class="stat-card"><div>实时汇率</div><div class="stat-val" style="font-size:18px; margin-top:15px;" id="ex_val">1 USD = 7.2145 CNY</div></div>
             </div>
             
             <div class="card openclaw-border">
                 <h3>OpenClaw 外部环境感知雷达</h3>
                 <div id="claw_radar">
-                    <div class="radar-circle" style="animation-delay: 0s;"></div>
-                    <div class="radar-circle" style="animation-delay: 1s;"></div>
-                    <div class="radar-circle" style="animation-delay: 2s;"></div>
-                    <p style="z-index: 10; font-weight: bold; color: var(--dark);">正在扫描竞品价格与政策变动...</p >
+                    <div class="radar-sweep"></div>
+                    <div style="z-index: 10; color: #fff; font-size: 12px; font-family: monospace; letter-spacing: 2px;" id="radar_text">STATUS: SCANNING...</div>
                 </div>
             </div>
         </div>
 
-        <div id="openclaw_hq" class="section">
+        <div id="claw_hq" class="section">
             <div class="card openclaw-border">
-                <h3>🛰️ OpenClaw 自动执行与感知引擎</h3>
-                <p style="color:var(--gray); font-size:14px; margin-bottom:15px;">OpenClaw 正在通过独立线程执行外部嗅探任务，保护 ERP 核心数据不受干扰。</p >
-                <div class="console" id="claw_console">
-[OpenClaw] 引擎就绪。
-[Gemini] 内核代码同步成功。
-[Lobster] 正在接收市场模型策略...
+                <h3>🛰️ OpenClaw 三栖交互终端</h3>
+                <div class="console" id="main_log">
+                    <span class="log-gemini">[Gemini] 系统引导加载成功...</span><br>
+                    <span class="log-lobster">[Lobster] 业务决策逻辑已上线。</span><br>
+                    <span class="log-claw">[OpenClaw] 外部感知协议已就绪。等待用户指令...</span>
                 </div>
-                <div style="display:flex; gap:10px;">
-                    <button onclick="ClawEngine.scanWorld()">⚡ 启动全网政策 & 价格扫描</button>
-                    <button class="secondary" onclick="ClawEngine.defend()">🛡️ 开启恶意爬虫对抗模式</button>
+                
+                <div class="control-panel">
+                    <button class="claw-btn" onclick="GLO.runScan()">⚡ 启动全网穿透扫描</button>
+                    <button class="gemini-btn" onclick="GLO.runOptimize()">🧬 执行代码深度自愈</button>
+                    <button onclick="GLO.runAdBoost()">📢 触发 Lobster 自动投放</button>
+                    <button style="background:var(--dark)" onclick="GLO.clearLogs()">🧹 清理终端日志</button>
                 </div>
             </div>
         </div>
 
-        <div id="ad_manage" class="section">
-            <div class="card">
-                <h3>📢 智能投放 (Lobster 增强)</h3>
-                <input placeholder="广告计划名称" value="GLO_AUTO_ADS_US_001">
-                <button onclick="alert('OpenClaw 已校验 API 链路安全，正在通过 Lobster 部署广告')">极速部署计划</button>
-            </div>
-        </div>
-
-        <div id="monitor" class="section">
-            <div class="card">
-                <h3>🤖 Gemini 内核健康度</h3>
-                <div class="console" id="monitor_log">正在监听系统底层...</div>
+        <div id="ad_center" class="section">
+            <div class="card lobster-border">
+                <h3>📢 Lobster 智能投放策略</h3>
+                <div class="item-list" id="ad_list">
+                    <div class="item-row"><span>FB_Spring_Sale_01</span><span style="color:var(--success)">投放中 (ROI: 5.2)</span></div>
+                    <div class="item-row"><span>TK_Trend_Watch</span><span style="color:var(--warning)">学习中</span></div>
+                </div>
+                <input id="new_ad_input" placeholder="输入新的 SKU 或 关键词 自动生成计划...">
+                <button onclick="GLO.createNewAd()">🚀 部署 AI 扩容计划</button>
             </div>
         </div>
 
@@ -176,71 +176,100 @@ button:hover { background: var(--primary); box-shadow: var(--ai-glow); }
 
 <script>
 /**
- * TRIPLE-CORE ENGINE: GEMINI (底层) x LOBSTER (决策) x OPENCLAW (外部)
+ * GLO ENGINE CORE
  */
-const ClawEngine = {
-    logs: [],
-    
-    addLog(msg, source = "claw") {
-        const console = document.getElementById('claw_console');
-        const time = new Date().toLocaleTimeString();
-        let sourceClass = "line-" + source;
-        console.innerHTML += `<br>[${time}] <span class="${sourceClass}">[${source.toUpperCase()}]</span> ${msg}`;
-        console.scrollTop = console.scrollHeight;
+const GLO = {
+    gmv: 24105.82,
+    opts: 142,
+    risks: 0,
+
+    init() {
+        this.startHeartbeat();
+        console.log("GLO Systems Online.");
     },
 
-    scanWorld() {
-        this.addLog("正在穿透 Amazon 价格防火墙...", "claw");
+    addLog(msg, type) {
+        const log = document.getElementById('main_log');
+        const time = new Date().toLocaleTimeString();
+        log.innerHTML += `<br>[${time}] <span class="log-${type}">[${type.toUpperCase()}] ${msg}</span>`;
+        log.scrollTop = log.scrollHeight;
+    },
+
+    updateBadge(id, status, color) {
+        const el = document.getElementById(id);
+        el.innerText = status;
+        // 简单的闪烁效果模拟处理中
+        el.style.opacity = "0.5";
+        setTimeout(() => el.style.opacity = "1", 500);
+    },
+
+    // 操作逻辑
+    runScan() {
+        this.updateBadge('status_claw', 'OpenClaw: Scanning', 'var(--openclaw)');
+        this.addLog("启动分布式爬虫集群，正在穿透主流平台防火墙...", "claw");
+        document.getElementById('radar_text').innerText = "STATUS: PENETRATING...";
+        
         setTimeout(() => {
-            this.addLog("发现 3 个同质化 SKU 降价 5%，建议 Lobster 调整出价策略。", "claw");
-            this.addLog("政策预警：欧盟地区电子产品税务合规性有变，正在解析 PDF...", "claw");
+            this.risks += Math.floor(Math.random() * 5);
+            document.getElementById('risk_val').innerText = this.risks;
+            this.addLog("✅ 抓取完成：发现 2 个竞争对手调价行为，已同步至 Lobster。", "claw");
+            this.addLog("🛡️ 拦截 1 次来自非授权站点的敏感数据刺探。", "claw");
+            document.getElementById('radar_text').innerText = "STATUS: STANDBY";
+            this.updateBadge('status_claw', 'OpenClaw: Active', 'var(--openclaw)');
+        }, 2000);
+    },
+
+    runOptimize() {
+        this.updateBadge('status_gemini', 'Gemini: Refactoring', 'var(--primary)');
+        this.addLog("分析冗余事件监听器... 正在合并 API 聚合请求...", "gemini");
+        
+        setTimeout(() => {
+            this.opts += 8;
+            document.getElementById('opt_count').innerText = this.opts;
+            this.addLog("✅ 底层优化完成：首屏渲染时间降低 120ms，内存占用缩减 18%。", "gemini");
+            this.updateBadge('status_gemini', 'Gemini: Optimized', 'var(--primary)');
         }, 1500);
     },
 
-    defend() {
-        this.addLog("启动安全隔离墙...", "claw");
-        this.addLog("检测到非法扫描请求来自 IP: 192.x.x.x，已自动伪造虚假库存数据进行欺骗。", "claw");
-    }
-};
-
-const SystemCore = {
-    init() {
-        this.heartbeat();
-        this.dynamicUI();
-        ClawEngine.addLog("OpenClaw 感知组件加载完成。", "claw");
-        ClawEngine.addLog("Gemini 自进化逻辑已挂载。", "gemini");
-        ClawEngine.addLog("Lobster 业务模型已链接。", "lobster");
+    runAdBoost() {
+        this.updateBadge('status_lobster', 'Lobster: Deciding', 'var(--lobster)');
+        this.addLog("根据 Claw 提供的数据流，正在重新分配预算权重...", "lobster");
+        
+        setTimeout(() => {
+            this.addLog("✅ 决策部署：将 SKU-882 的预算向东欧市场倾斜 15%，预期 ROI 提升 0.8。", "lobster");
+            this.updateBadge('status_lobster', 'Lobster: Active', 'var(--lobster)');
+        }, 1200);
     },
 
-    heartbeat() {
+    createNewAd() {
+        const val = document.getElementById('new_ad_input').value || "Auto_SKU_Task";
+        const list = document.getElementById('ad_list');
+        list.innerHTML = `<div class="item-row"><span>${val}</span><span style="color:var(--primary)">初始化中...</span></div>` + list.innerHTML;
+        this.addLog(`为 [${val}] 创建了新的多模态投放链路。`, "lobster");
+    },
+
+    clearLogs() {
+        document.getElementById('main_log').innerHTML = '<span class="log-gemini">[System] Logs Cleared.</span>';
+    },
+
+    startHeartbeat() {
         setInterval(() => {
-            // 模拟 Gemini 的代码优化
-            if(Math.random() > 0.8) {
-                ClawEngine.addLog("清理内存碎片，垃圾回收完成。", "gemini");
-            }
-            // 模拟 Lobster 的决策
-            if(Math.random() > 0.9) {
-                ClawEngine.addLog("ROI 异常波动预测，已自动微调 Meta Ads 目标人群。", "lobster");
-            }
-            // 模拟 OpenClaw 的嗅探
-            if(Math.random() > 0.85) {
-                ClawEngine.addLog("外部感应：TikTok 热门趋势关键词 #SmartHome 正在爆发。", "claw");
-            }
+            // 模拟流水跳动
+            this.gmv += Math.random() * 5;
+            document.getElementById('gmv_val').innerText = '$' + this.gmv.toLocaleString(undefined, {minimumFractionDigits: 2});
             
-            // UI 更新
+            // 模拟时间与汇率
             document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-            document.getElementById('exchange_val').innerText = (7.21 + Math.random()*0.01).toFixed(4);
-            const gmv = parseFloat(document.getElementById('gmv_val').innerText.replace('$','').replace(',',''));
-            document.getElementById('gmv_val').innerText = '$' + (gmv + Math.random()*10).toLocaleString();
-        }, 5000);
-    },
+            const ex = (7.2145 + (Math.random() - 0.5) * 0.002).toFixed(4);
+            document.getElementById('ex_val').innerText = `1 USD = ${ex} CNY`;
 
-    dynamicUI() {
-        // 模拟 Gemini 自动优化响应式菜单
-        ClawEngine.addLog("Gemini 正在分析用户交互习惯并重排渲染队列...", "gemini");
+            // 随机触发微型自动化任务
+            if(Math.random() > 0.95) this.addLog("检测到系统闲置，Gemini 正在后台压缩图像缓存...", "gemini");
+        }, 3000);
     }
 };
 
+// 基础路由
 function page(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
@@ -248,8 +277,7 @@ function page(id) {
     if(window.event) window.event.currentTarget.classList.add('active');
 }
 
-window.onload = () => SystemCore.init();
-
+window.onload = () => GLO.init();
 </script>
 
 </body>
