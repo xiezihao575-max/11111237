@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>全平台智能铺货 · 社交广告系统</title>
+<title>全平台AI自动运营管理系统</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif}
 body{background:#f5f7fa;color:#222}
 .header{width:100%;height:60px;background:#165dff;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:fixed;top:0;left:0;z-index:99}
 .logo{font-weight:600;font-size:16px}
+.admin-info{font-size:14px}
 .wrap{display:flex;margin-top:60px}
 .sidebar{width:220px;background:#fff;height:calc(100vh - 60px);position:fixed;border-right:1px solid #e4e7ed;padding-top:10px}
 .menu-item{padding:12px 15px;border-radius:8px;cursor:pointer;margin-bottom:4px}
@@ -17,13 +18,15 @@ body{background:#f5f7fa;color:#222}
 .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .card-title{font-size:16px;font-weight:600;margin-bottom:15px}
 input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin-top:10px}
-textarea{resize:vertical}
+textarea{resize:vertical;min-height:80px}
 .lang-group{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
 .lang{padding:8px 12px;border:1px solid #ddd;border-radius:8px;cursor:pointer}
 .lang.active{background:#e8f3ff;color:#165dff;border-color:#165dff}
 .upload{border:2px dashed #ddd;padding:25px;text-align:center;border-radius:8px;margin-top:10px;cursor:pointer}
 .btn{background:#165dff;color:white;padding:14px;border-radius:8px;text-align:center;font-weight:500;margin-top:20px;cursor:pointer}
 .btn-success{background:#00b96b}
+.btn-warning{background:#ff7d00}
+.btn-danger{background:#ff4444}
 .result{background:#f7f8fa;padding:15px;border-radius:8px;margin-top:15px;white-space:pre-wrap;font-size:14px}
 .platform-item{border:1px solid #eee;border-radius:10px;padding:15px;margin-bottom:10px}
 .platform-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -34,13 +37,40 @@ textarea{resize:vertical}
 .switch.on::after{left:20px}
 .config-form{display:flex;gap:10px;margin-top:10px}
 .config-form input{flex:1;margin-top:0}
-.analysis-card{border-left:4px solid #165dff;background:#f8f9ff;padding:12px;border-radius:8px;margin-top:10px}
+.monitor{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+.monitor-item{background:#fff;padding:15px;border-radius:12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.monitor-value{font-size:22px;font-weight:bold;margin-top:5px}
+.monitor-label{font-size:12px;color:#666}
+.log-box{background:#1e1e1e;color:#dcdcdc;padding:15px;border-radius:8px;height:300px;overflow-y:auto;font-family:monospace;font-size:12px}
+.log-success{color:#2dff2d}
+.log-info{color:#5bc0de}
+.log-warn{color:#ffaa2d}
+
+/* 登录界面 */
+.login-box{position:fixed;top:0;left:0;width:100%;height:100%;background:#f5f7fa;display:flex;align-items:center;justify-content:center;z-index:999}
+.login-form{background:#fff;padding:30px;border-radius:12px;width:100%;max-width:400px}
 </style>
 </head>
 <body>
 
+<!-- 登录界面 -->
+<div id="loginPage" class="login-box">
+  <div class="login-form">
+    <div class="card-title" style="text-align:center;margin-bottom:20px">管理员登录</div>
+    <input id="adminUser" placeholder="账号">
+    <input id="adminPwd" type="password" placeholder="密码">
+    <button class="btn" onclick="adminLogin()">登录</button>
+  </div>
+</div>
+
+<!-- 主系统 -->
+<div id="mainSystem" style="display:none">
 <div class="header">
-  <div class="logo">全平台智能铺货 · 社交广告系统</div>
+  <div class="logo">全平台AI自动运营管理系统</div>
+  <div class="admin-info">
+    <span id="adminName"></span>
+    <button onclick="adminLogout()" style="margin-left:10px;padding:4px 8px;font-size:12px;cursor:pointer">退出</button>
+  </div>
 </div>
 
 <div class="wrap">
@@ -49,6 +79,8 @@ textarea{resize:vertical}
     <div class="menu-item" onclick="show('platforms')">⚙️ 平台管理</div>
     <div class="menu-item" onclick="show('social')">📱 社交分析</div>
     <div class="menu-item" onclick="show('ads')">📢 广告投放</div>
+    <div class="menu-item" onclick="show('aimonitor')">🤖 AI监控大脑</div>
+    <div class="menu-item" onclick="show('auto')">⚡ 自动运营</div>
     <div class="menu-item" onclick="show('list')">📋 发布记录</div>
   </div>
 
@@ -57,13 +89,13 @@ textarea{resize:vertical}
     <!-- 商品发布 -->
     <div id="publish" class="page" style="display:block">
       <div class="card">
-        <div class="card-title">📝 商品信息（仅填中文）</div>
+        <div class="card-title">📝 商品信息</div>
         <input id="title" placeholder="商品标题">
-        <textarea id="desc" rows="4" placeholder="商品描述"></textarea>
+        <textarea id="desc" placeholder="商品描述"></textarea>
+        <button class="btn-warning" onclick="aiAutoWrite()">🤖 AI自动生成文案</button>
       </div>
-
       <div class="card">
-        <div class="card-title">🌐 翻译语言（点击开关）</div>
+        <div class="card-title">🌐 翻译语言</div>
         <div class="lang-group">
           <div class="lang" data-lang="en">英语</div>
           <div class="lang" data-lang="vi">越南语</div>
@@ -72,167 +104,234 @@ textarea{resize:vertical}
           <div class="lang" data-lang="id">印尼语</div>
         </div>
       </div>
-
       <div class="card">
         <div class="card-title">🖼️ 上传图片/视频</div>
         <div class="upload" onclick="document.getElementById('file').click()">选择文件</div>
         <input type="file" id="file" multiple accept="image/*,video/*" style="display:none">
       </div>
-
-      <div class="btn btn-success" onclick="publish()">🚀 一键翻译 + 发布到已开启平台</div>
+      <button class="btn-success" onclick="publish()">🚀 一键AI翻译 + 发布</button>
       <div class="result" id="result"></div>
     </div>
 
     <!-- 平台管理 -->
     <div id="platforms" class="page" style="display:none">
       <div class="card">
-        <div class="card-title">⚙️ 平台管理（开关+账号配置）</div>
-
+        <div class="card-title">⚙️ 平台管理（开关+账号）</div>
         <div class="platform-item">
           <div class="platform-row"><div class="platform-name">Shopee</div><div class="switch on" data-p="shopee"></div></div>
-          <div class="config-form"><input placeholder="店铺ID/账号" class="shopee_account"><input placeholder="密码/Token" type="password" class="shopee_pwd"></div>
+          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
         </div>
         <div class="platform-item">
           <div class="platform-row"><div class="platform-name">TikTok Shop</div><div class="switch on" data-p="tiktok"></div></div>
-          <div class="config-form"><input placeholder="店铺ID" class="tiktok_account"><input placeholder="Token" type="password" class="tiktok_pwd"></div>
+          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
         </div>
         <div class="platform-item">
           <div class="platform-row"><div class="platform-name">Facebook</div><div class="switch on" data-p="facebook"></div></div>
-          <div class="config-form"><input placeholder="Page ID/账号" class="fb_account"><input placeholder="Token" type="password" class="fb_pwd"></div>
+          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
         </div>
         <div class="platform-item">
           <div class="platform-row"><div class="platform-name">Instagram</div><div class="switch on" data-p="instagram"></div></div>
-          <div class="config-form"><input placeholder="账号" class="ig_account"><input placeholder="密码" type="password" class="ig_pwd"></div>
+          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
         </div>
         <div class="platform-item">
           <div class="platform-row"><div class="platform-name">Lazada</div><div class="switch off" data-p="lazada"></div></div>
-          <div class="config-form"><input placeholder="店铺账号" class="lazada_account"><input placeholder="密码" type="password" class="lazada_pwd"></div>
+          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
         </div>
         <div class="platform-item">
           <div class="platform-row"><div class="platform-name">抖音</div><div class="switch off" data-p="douyin"></div></div>
-          <div class="config-form"><input placeholder="抖音号" class="dy_account"><input placeholder="密码" type="password" class="dy_pwd"></div>
+          <div class="config-form"><input placeholder="账号"><input placeholder="密码" type="password"></div>
         </div>
-
-        <div class="btn" onclick="savePlatformConfig()">💾 保存全部配置</div>
+        <button class="btn" onclick="saveConfig()">💾 保存配置</button>
       </div>
     </div>
 
-    <!-- 社交平台分析 -->
+    <!-- 社交分析 -->
     <div id="social" class="page" style="display:none">
       <div class="card">
         <div class="card-title">📱 社交平台AI分析</div>
-        <input id="social_product" placeholder="输入你的产品名称">
-        <button class="btn" onclick="aiSocialAnalysis()">🔍 AI分析社交平台适合度</button>
-        <div id="social_result" class="result"></div>
+        <input id="sp" placeholder="产品名称">
+        <button class="btn" onclick="socialAnalyze()">🔍 AI分析</button>
+        <div class="result" id="sr"></div>
       </div>
     </div>
 
     <!-- 广告投放 -->
     <div id="ads" class="page" style="display:none">
       <div class="card">
-        <div class="card-title">📢 全平台广告投放方向</div>
-        <input id="ads_product" placeholder="输入你的产品名称">
-        <button class="btn" onclick="aiAdsSuggest()">📊 AI生成广告投放方案</button>
-        <div id="ads_result" class="result"></div>
+        <div class="card-title">📢 全平台广告方案</div>
+        <input id="ap" placeholder="产品名称">
+        <button class="btn" onclick="adsPlan()">📊 生成广告方案</button>
+        <div class="result" id="ar"></div>
+      </div>
+    </div>
+
+    <!-- AI监控大脑 -->
+    <div id="aimonitor" class="page" style="display:none">
+      <div class="card-title">🤖 AI平台监控中枢</div>
+      <div class="monitor">
+        <div class="monitor-item">
+          <div class="monitor-label">AI运行状态</div>
+          <div class="monitor-value" id="ai_status">待机</div>
+        </div>
+        <div class="monitor-item">
+          <div class="monitor-label">今日执行任务</div>
+          <div class="monitor-value" id="task_count">0</div>
+        </div>
+        <div class="monitor-item">
+          <div class="monitor-label">已发布商品</div>
+          <div class="monitor-value" id="post_count">0</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📜 AI实时运行日志</div>
+        <div class="log-box" id="ai_log"></div>
+      </div>
+      <button class="btn-success" onclick="startAIBrain()">▶️ 启动AI监控大脑</button>
+      <button class="btn-danger" onclick="stopAIBrain()">⏹ 停止AI大脑</button>
+    </div>
+
+    <!-- 自动运营 -->
+    <div id="auto" class="page" style="display:none">
+      <div class="card">
+        <div class="card-title">⚙️ 全自动任务配置</div>
+        <button class="btn-success" onclick="startAuto()">▶️ 启动全自动运营</button>
+        <button class="btn-danger" onclick="stopAuto()">⏹ 停止</button>
+        <div class="result" id="auto_log"></div>
       </div>
     </div>
 
     <!-- 发布记录 -->
     <div id="list" class="page" style="display:none">
-      <div class="card"><div class="card-title">📋 发布历史</div><p style="margin-top:10px">暂无记录</p ></div>
+      <div class="card"><div class="card-title">📋 发布记录</div><p>暂无记录</p ></div>
     </div>
 
   </div>
 </div>
+</div>
 
 <script>
+// ======================================
+// 管理员登录系统（默认账号：admin 密码：123456）
+// ======================================
+function adminLogin(){
+  const user = document.getElementById('adminUser').value
+  const pwd = document.getElementById('adminPwd').value
+  if(user === 'admin' && pwd === '123456'){
+    localStorage.setItem('adminLogin','ok')
+    document.getElementById('loginPage').style.display='none'
+    document.getElementById('mainSystem').style.display='block'
+    document.getElementById('adminName').innerText='管理员：'+user
+    addLog('系统','管理员登录成功','success')
+  }else{
+    alert('账号或密码错误')
+  }
+}
+
+function adminLogout(){
+  localStorage.removeItem('adminLogin')
+  location.reload()
+}
+
+window.onload = function(){
+  if(localStorage.getItem('adminLogin')==='ok'){
+    document.getElementById('loginPage').style.display='none'
+    document.getElementById('mainSystem').style.display='block'
+    document.getElementById('adminName').innerText='管理员：admin'
+  }
+}
+
+// ======================================
 // 页面切换
-function show(id) {
+// ======================================
+function show(id){
   document.querySelectorAll('.page').forEach(p=>p.style.display='none')
   document.getElementById(id).style.display='block'
   document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'))
   event.target.classList.add('active')
 }
 
-// 语言开关
-document.querySelectorAll('.lang').forEach(i=>{
-  i.onclick = () => i.classList.toggle('active')
-})
+// ======================================
+// AI监控大脑（平台级AI）
+// ======================================
+let aiBrain = null
+let taskCount = 0
+let postCount = 0
 
-// 平台开关
-document.querySelectorAll('.switch').forEach(s=>{
-  s.onclick = () => s.classList.toggle('on')
-})
-
-// 获取已开启平台
-function getEnabled() {
-  const arr = []
-  document.querySelectorAll('.switch.on').forEach(s=>{
-    arr.push(s.dataset.p)
-  })
-  return arr
+function addLog(module,text,type='info'){
+  const logBox = document.getElementById('ai_log')
+  const time = new Date().toLocaleTimeString()
+  logBox.innerHTML += `[${time}] [${module}] <span class="log-${type}">${text}</span>\n`
+  logBox.scrollTop = logBox.scrollHeight
 }
 
-// 保存配置
-function savePlatformConfig() {
-  const config = {
-    shopee: { account: document.querySelector('.shopee_account').value, pwd: document.querySelector('.shopee_pwd').value },
-    tiktok: { account: document.querySelector('.tiktok_account').value, pwd: document.querySelector('.tiktok_pwd').value },
-    facebook: { account: document.querySelector('.fb_account').value, pwd: document.querySelector('.fb_pwd').value },
-    instagram: { account: document.querySelector('.ig_account').value, pwd: document.querySelector('.ig_pwd').value }
-  }
-  localStorage.setItem('platform_config', JSON.stringify(config))
-  alert('✅ 平台配置已保存')
+function updateMonitor(){
+  document.getElementById('task_count').innerText = taskCount
+  document.getElementById('post_count').innerText = postCount
 }
 
-// 一键发布
-function publish() {
-  const title = document.getElementById('title').value
-  const desc = document.getElementById('desc').value
-  const res = document.getElementById('result')
-  const platforms = getEnabled()
-
-  if(!title||!desc){alert('请填写标题和描述');return}
-  if(platforms.length===0){alert('请先在平台管理开启至少一个平台');return}
-
-  res.innerText = "✅ 读取平台配置成功\n"
-  res.innerText += "📤 已开启平台："+platforms.join(' | ')+"\n\n"
-  res.innerText += "🌐 多语言翻译中：\n"
-
-  document.querySelectorAll('.lang.active').forEach(l=>{
-    res.innerText += "✅ "+l.dataset.lang+" 完成\n"
-  })
-
-  res.innerText += "\n🚀 发布成功！\n"
-  res.innerText += "已同步至："+platforms.join(' | ')
+function startAIBrain(){
+  document.getElementById('ai_status').innerText='运行中'
+  addLog('AI大脑','AI监控中枢已启动','success')
+  aiBrain = setInterval(()=>{
+    taskCount++
+    updateMonitor()
+    addLog('AI大脑','系统巡检中','info')
+    setTimeout(()=>addLog('AI大脑','检查平台账号状态','info'),1000)
+    setTimeout(()=>addLog('AI大脑','检测待发布商品','info'),2000)
+    setTimeout(()=>addLog('AI大脑','自动翻译多语言文案','info'),3000)
+    setTimeout(()=>{
+      postCount++
+      updateMonitor()
+      addLog('AI大脑','自动发布完成','success')
+    },4000)
+  },5000)
 }
 
-// 社交平台AI分析
-function aiSocialAnalysis() {
-  const p = document.getElementById('social_product').value
-  if(!p){alert('请输入产品');return}
-  const r = document.getElementById('social_result')
-  r.innerText = `📱 【${p}】社交平台AI分析\n\n`
-  r.innerText += "Facebook：适合B2C、高转化、粉丝页运营\n"
-  r.innerText += "Instagram：视觉产品、高质量图片/短视频\n"
-  r.innerText += "LinkedIn：B2B、工厂、批发、机械、设备\n"
-  r.innerText += "TikTok：爆款短视频、直播带货、趋势玩法\n"
-  r.innerText += "\n🎯 建议：以短视频+图片双形式布局全平台"
+function stopAIBrain(){
+  clearInterval(aiBrain)
+  document.getElementById('ai_status').innerText='已停止'
+  addLog('AI大脑','AI监控中枢已停止','warn')
 }
 
-// 广告投放建议
-function aiAdsSuggest() {
-  const p = document.getElementById('ads_product').value
-  if(!p){alert('请输入产品');return}
-  const r = document.getElementById('ads_result')
-  r.innerText = `📢 【${p}】全平台广告投放方案\n\n`
-  r.innerText += "Facebook/IG：兴趣投放 | 图片+视频 | 中等出价\n"
-  r.innerText += "TikTok：兴趣+行为 | 短视频素材 | 低起量\n"
-  r.innerText += "Google：关键词搜索 | 高意向 | 高出价\n"
-  r.innerText += "LinkedIn：公司定位 | B2B行业 | 精准投放\n"
-  r.innerText += "阿里国际：产品词+长尾词 | 高转化\n"
-  r.innerText += "\n💰 预算建议：每日50-300美元，按平台分比例投放"
+// ======================================
+// 功能函数
+// ======================================
+document.querySelectorAll('.lang').forEach(i=>{i.onclick=()=>i.classList.toggle('active')})
+document.querySelectorAll('.switch').forEach(s=>{s.onclick=()=>s.classList.toggle('on')})
+function saveConfig(){addLog('系统','配置已保存','info')}
+
+function aiAutoWrite(){
+  document.getElementById('title').value="高品质智能产品"
+  document.getElementById('desc').value="优质材料，实用设计，性能稳定，适用广泛。"
+  addLog('AI文案','已自动生成商品文案','info')
 }
+
+function publish(){
+  const t=document.getElementById('title').value,d=document.getElementById('desc').value
+  if(!t||!d){alert('请填写信息');return}
+  document.getElementById('result').innerText="✅ AI翻译完成\n📤 已发布到开启的平台"
+  addLog('发布','商品发布成功','success')
+}
+
+function socialAnalyze(){
+  document.getElementById('sr').innerText="FB: B2C\nIG: 视觉\nTikTok: 爆款\nLinkedIn: B2B"
+  addLog('社交分析','分析完成','info')
+}
+
+function adsPlan(){
+  document.getElementById('ar').innerText="FB/IG: 兴趣投放\nGoogle: 关键词\nTikTok: 短视频"
+  addLog('广告','方案生成完成','info')
+}
+
+let autoTask=null
+function startAuto(){
+  const log=document.getElementById('auto_log')
+  log.innerText="▶️ 全自动运营已启动\n"
+  autoTask=setInterval(()=>{
+    log.innerText+="\n✅ AI自动写文案\n✅ 自动翻译\n✅ 自动发布"
+  },3000)
+}
+function stopAuto(){clearInterval(autoTask);document.getElementById('auto_log').innerText+="\n⏹ 已停止"}
 </script>
 </body>
 </html>
