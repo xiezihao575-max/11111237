@@ -1,82 +1,189 @@
+from flask import Flask, render_template_string, request, jsonify
+import json
+import time
+
+app = Flask(__name__)
+
+# --- 模拟配置（实际开发请替换为 Meta 官方 API 凭证） ---
+CONFIG = {
+    "FB_API_VERSION": "v18.0",
+    "ACCESS_TOKEN": "YOUR_ACCESS_TOKEN_HERE",
+    "AD_ACCOUNT_ID": "act_YOUR_ACCOUNT_ID"
+}
+
+# --- HTML 模板 (前端界面与交互逻辑) ---
+HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>GLO ERP | 极简 HTML 直连版</title>
-    <style>
-        body { font-family: sans-serif; background: #f4f7f9; padding: 40px; color: #333; }
-        .box { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        input { width: 70%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-        button { padding: 12px 24px; background: #0071e3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #005bbd; }
-        #log { margin-top: 20px; background: #1d1d1f; color: #00ffd0; padding: 15px; border-radius: 10px; font-family: monospace; height: 200px; overflow-y: auto; font-size: 13px; }
-        .status { font-size: 12px; margin-bottom: 10px; color: #666; }
-    </style>
+    <title>AdSmart Pro - 社交平台全自动化投放系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
-<body>
+<body class="bg-gray-50">
+    <nav class="bg-indigo-700 text-white p-4 shadow-xl flex justify-between items-center">
+        <h1 class="text-2xl font-black tracking-tighter">ADSMART <span class="text-indigo-300">OS</span></h1>
+        <div class="flex gap-6 text-sm font-medium">
+            <span>系统状态: <span class="text-green-400">● 运行中</span></span>
+            <span>API 延迟: 12ms</span>
+        </div>
+    </nav>
 
-<div class="box">
-    <h2>🛰️ GLO ERP 选品引擎</h2>
-    <p class="status">节点状态: <span id="api_status">正在检测本地 Llama 3...</span></p>
-    
-    <div style="display: flex; gap: 10px;">
-        <input type="text" id="userInput" placeholder="输入产品关键词 (例如: 智能手表)">
-        <button id="sendBtn">AI 深度分析</button>
+    <div class="container mx-auto py-8 px-4 grid grid-cols-12 gap-8">
+        
+        <div class="col-span-12 lg:col-span-4 space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <h2 class="text-lg font-bold mb-4 flex items-center">🔍 竞品数据实时抓取</h2>
+                <div class="space-y-3">
+                    <input id="targetUrl" type="text" placeholder="输入 FB 主页或商品 URL" class="w-full border-gray-200 border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                    <button onclick="startAnalysis()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 active:scale-95 transition">启动分布式分析</button>
+                </div>
+                
+                <div id="analysisResult" class="mt-6 hidden animate-pulse">
+                    <div class="space-y-2">
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                        <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl">
+                <h2 class="text-lg font-bold mb-4 text-indigo-400">🤖 AI 投放策略指导</h2>
+                <div id="aiInsights" class="text-sm space-y-4 opacity-80">
+                    <p>等待数据输入以生成建议...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 lg:col-span-8">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
+                <h2 class="text-2xl font-bold mb-6">🚀 一键广告创建 (Step-by-Step)</h2>
+                
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <label class="block font-bold text-gray-700">1. 商品视频/图片素材</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-indigo-500 transition cursor-pointer" onclick="document.getElementById('fileInput').click()">
+                            <p class="text-gray-500">点击或拖拽视频到此处</p>
+                            <input type="file" id="fileInput" class="hidden">
+                        </div>
+                        
+                        <label class="block font-bold text-gray-700 pt-4">2. AI 文案优化</label>
+                        <textarea id="adText" class="w-full border border-gray-200 p-4 rounded-xl h-32 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="输入产品卖点，AI 将自动润色..."></textarea>
+                    </div>
+
+                    <div class="bg-gray-50 p-6 rounded-2xl space-y-4">
+                        <label class="block font-bold text-gray-700">3. 投放参数模拟</label>
+                        <div>
+                            <span class="text-sm text-gray-500">受众范围 (年龄)</span>
+                            <div class="flex gap-2 mt-1">
+                                <input type="number" id="ageMin" value="18" class="w-full p-2 border rounded-lg text-center">
+                                <span class="self-center">-</span>
+                                <input type="number" id="ageMax" value="45" class="w-full p-2 border rounded-lg text-center">
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-sm text-gray-500">每日预算 (USD)</span>
+                            <input type="range" id="budgetRange" min="10" max="1000" step="10" class="w-full h-2 bg-indigo-200 rounded-lg appearance-none cursor-pointer mt-2" oninput="updateBudget(this.value)">
+                            <div class="flex justify-between text-xl font-mono font-bold text-indigo-600 mt-2">
+                                <span>$</span><span id="budgetValue">10</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-gray-200 mt-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-500">预估触达人数:</span>
+                                <span class="font-bold text-green-600">~120,000</span>
+                            </div>
+                            <button onclick="submitAd()" class="w-full bg-orange-500 text-white py-4 rounded-xl font-black text-lg hover:bg-orange-600 shadow-lg shadow-orange-200 transition active:scale-95">
+                                确认支付并一键上架
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="log">>>> 系统就绪。请确保 Ollama 已启动并允许跨域。</div>
-</div>
-
-<script>
-    const logBox = document.getElementById('log');
-    const statusText = document.getElementById('api_status');
-
-    function addLog(msg, isError = false) {
-        const time = new Date().toLocaleTimeString();
-        logBox.innerHTML += `<div style="color: ${isError ? '#ff3b30' : '#00ffd0'}">[${time}] ${msg}</div>`;
-        logBox.scrollTop = logBox.scrollHeight;
-    }
-
-    // 1. 检查本地 AI 状态
-    async function checkStatus() {
-        try {
-            const res = await fetch('http://localhost:11434/api/tags');
-            if (res.ok) {
-                statusText.innerText = "● 本地 AI 已连接";
-                statusText.style.color = "#34c759";
-            }
-        } catch (e) {
-            statusText.innerText = "○ 未连接 (请设置 OLLAMA_ORIGINS)";
-            statusText.style.color = "#ff3b30";
+    <script>
+        function updateBudget(val) {
+            document.getElementById('budgetValue').innerText = val;
         }
-    }
 
-    // 2. 调用 AI 分析
-    document.getElementById('sendBtn').onclick = async () => {
-        const text = document.getElementById('userInput').value;
-        if (!text) return;
+        async function startAnalysis() {
+            const url = document.getElementById('targetUrl').value;
+            if(!url) return alert('请输入目标 URL');
+            
+            const btn = event.target;
+            btn.innerText = "数据抓取中...";
+            btn.disabled = true;
 
-        addLog(`分析请求: ${text}...`);
-        
-        try {
-            const response = await fetch('http://localhost:11434/api/generate', {
-                method: 'POST',
-                body: JSON.stringify({
-                    model: 'llama3',
-                    prompt: `作为选品专家，分析${text}的外贸潜力，50字以内。`,
-                    stream: false
-                })
-            });
-
-            const data = await response.json();
-            addLog(`AI 建议: ${data.response}`);
-        } catch (error) {
-            addLog(`错误: 无法访问本地 API。请检查是否开启了跨域权限或 Ollama 是否运行。`, true);
+            try {
+                const res = await axios.post('/api/analyze', { url: url });
+                document.getElementById('analysisResult').classList.remove('hidden');
+                document.getElementById('aiInsights').innerHTML = `
+                    <div class="bg-indigo-800 p-3 rounded-lg border-l-4 border-green-400 mb-2">
+                        <b>🔥 爆款发现:</b> 该竞品视频在前 3 秒流失率极低，建议模仿其开头节奏。
+                    </div>
+                    <div class="bg-indigo-800 p-3 rounded-lg border-l-4 border-blue-400">
+                        <b>🎯 建议受众:</b> 重点关注【${res.data.suggested_interest}】标签人群。
+                    </div>
+                `;
+            } catch (e) { alert('分析失败'); }
+            btn.innerText = "启动分布式分析";
+            btn.disabled = false;
         }
-    };
 
-    checkStatus();
-</script>
-
+        async function submitAd() {
+            const data = {
+                text: document.getElementById('adText').value,
+                budget: document.getElementById('budgetValue').innerText,
+                age: document.getElementById('ageMin').value + '-' + document.getElementById('ageMax').value
+            };
+            
+            if(!data.text) return alert('请填写广告文案');
+            
+            const res = await axios.post('/api/create_ad', data);
+            alert('成功！广告 ID: ' + res.data.ad_id + '\\n状态：已同步至 Facebook 广告队列。');
+        }
+    </script>
 </body>
 </html>
+"""
+
+# --- 后端 API 接口 ---
+
+@app.route('/')
+def index():
+    return render_template_string(HTML_TEMPLATE)
+
+@app.route('/api/analyze', methods=['POST'])
+def analyze():
+    # 这里模拟爬虫处理逻辑
+    data = request.json
+    target_url = data.get('url')
+    time.sleep(1.5)  # 模拟网络抓取延迟
+    return jsonify({
+        "status": "success",
+        "suggested_interest": "智能家居/户外运动",
+        "competitor_engagement": "高"
+    })
+
+@app.route('/api/create_ad', methods=['POST'])
+def create_ad():
+    # 这里是与 Meta API 对接的逻辑
+    ad_params = request.json
+    
+    # 实际开发中，这里会调用：
+    # requests.post(f"https://graph.facebook.com/{CONFIG['FB_API_VERSION']}/{CONFIG['AD_ACCOUNT_ID']}/ads", ...)
+    
+    print(f"正在为账户创建广告: {ad_params}")
+    
+    return jsonify({
+        "status": "published",
+        "ad_id": f"ad_{int(time.time())}",
+        "msg": "广告已成功同步"
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
