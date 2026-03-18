@@ -3,288 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini B2B 增长操作系统</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>GLO ERP | 外贸 B 端全球市场洞察引擎</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .nav-btn.active { background-color: #0ea5e9; color: white; box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3); }
-        @keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .loading-dot { animation: pulse-soft 1.5s infinite; }
+        :root { 
+            --primary: #0071e3; --success: #34c759; --warning: #ff9500; --danger: #ff3b30; 
+            --dark: #1d1d1f; --gray: #86868b; --light: #f5f5f7; --glass: rgba(255, 255, 255, 0.85);
+            --lobster: #ff5733; --openclaw: #00ffd0; 
+            --claw-bg: #0c0c0e;
+        }
+
+        *{margin:0;padding:0;box-sizing:border-box;font-family: "SF Pro Display", "PingFang SC", system-ui;}
+
+        body { background: #f0f2f5; color: var(--dark); overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
+
+        /* 头部导航 */
+        .header {
+            height: 64px; background: var(--glass); backdrop-filter: blur(25px);
+            border-bottom: 1px solid rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between;
+            padding: 0 24px; z-index: 1000;
+        }
+
+        .logo {
+            font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--openclaw));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .ai-group { display: flex; gap: 12px; }
+        .ai-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; color: #fff; font-weight: bold; }
+        .badge-openclaw { background: var(--openclaw); color: var(--dark); box-shadow: 0 0 10px rgba(0,255,208,0.4); }
+
+        /* 侧边栏 */
+        .sidebar { width: 260px; background: #fff; border-right: 1px solid #d2d2d7; padding: 24px 12px; }
+        .menu-group { margin-bottom: 24px; }
+        .menu-label { font-size: 11px; color: var(--gray); text-transform: uppercase; margin-bottom: 10px; font-weight: 700; letter-spacing: 1px; }
+
+        .menu-item {
+            padding: 12px 16px; cursor: pointer; border-radius: 12px; margin-bottom: 4px;
+            transition: 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; color: #424245;
+        }
+        .menu-item:hover { background: var(--light); transform: translateX(5px); }
+        .menu-item.active { background: var(--dark); color: #fff; }
+
+        /* 内容区 */
+        .content { flex: 1; padding: 24px; overflow-y: auto; scroll-behavior: smooth; }
+        .section { display: none; animation: fadeIn 0.4s ease; }
+        .section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 统计卡片 */
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-box { background: #fff; padding: 20px; border-radius: 18px; border: 1px solid #eee; }
+        .stat-box h4 { font-size: 11px; color: var(--gray); text-transform: uppercase; margin-bottom: 8px; }
+        .stat-box .val { font-size: 24px; font-weight: 800; display: block; }
+
+        /* 选品列表 */
+        .card { background: #fff; border-radius: 22px; padding: 24px; margin-bottom: 24px; border: 1px solid rgba(0,0,0,0.05); }
+        .product-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .product-table th { text-align: left; padding: 12px; border-bottom: 1px solid #eee; font-size: 12px; color: var(--gray); }
+        .product-table td { padding: 12px; border-bottom: 1px solid #fafafa; font-size: 13px; }
+
+        /* OpenClaw 终端 */
+        .claw-console { background: var(--claw-bg); color: var(--openclaw); padding: 20px; border-radius: 16px; height: 300px; overflow-y: auto; font-family: 'Consolas', monospace; font-size: 11px; line-height: 1.6; }
+
+        /* 搜索与筛选 */
+        .search-row { display: flex; gap: 12px; margin-bottom: 20px; }
+        input { flex: 1; padding: 12px 16px; border: 1px solid #ddd; border-radius: 12px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--openclaw); box-shadow: 0 0 10px rgba(0,255,208,0.2); }
+        button { padding: 12px 24px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button.primary { background: var(--dark); color: #fff; }
+        button.claw-btn { background: var(--openclaw); color: var(--dark); }
+
+        .tag { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .tag-success { background: rgba(52, 199, 89, 0.1); color: var(--success); }
+        .tag-warning { background: rgba(255, 149, 0, 0.1); color: var(--warning); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 h-screen overflow-hidden">
+<body>
 
-    <div class="flex h-full">
-        <aside class="w-64 bg-[#030712] text-slate-400 flex flex-col border-r border-slate-800 shadow-2xl z-20">
-            <div class="p-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center text-white shadow-lg">
-                        <i data-lucide="zap" class="w-6 h-6 fill-current"></i>
-                    </div>
-                    <div class="leading-tight">
-                        <h1 class="text-lg font-bold text-white tracking-tight">Gemini Pro</h1>
-                        <p class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest">B2B OS v3.0</p>
-                    </div>
-                </div>
-            </div>
-            
-            <nav class="flex-1 px-4 space-y-1">
-                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-bold">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i> 数字化看板
-                </button>
-                <button onclick="switchTab('ai-hub')" id="btn-ai-hub" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-bold">
-                    <i data-lucide="cpu" class="w-5 h-5"></i> Gemini 创作中心
-                </button>
-                <button onclick="switchTab('ads-monitor')" id="btn-ads-monitor" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-bold">
-                    <i data-lucide="globe" class="w-5 h-5"></i> 全球投放同步
-                </button>
-                <button onclick="switchTab('settings')" id="btn-settings" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-bold mt-4 border-t border-slate-800 pt-4">
-                    <i data-lucide="key-round" class="w-5 h-5"></i> API 密钥设置
-                </button>
-            </nav>
+<div class="header">
+    <div class="logo">🛰️ GLO | GLOBAL MARKET INSIGHT</div>
+    <div class="ai-group">
+        <div class="ai-badge badge-openclaw">OpenClaw: Deep Scanning</div>
+        <div id="clock" style="font-family: monospace; font-weight: bold; margin-left: 20px; color: var(--gray);">00:00:00</div>
+    </div>
+</div>
 
-            <div class="p-4 bg-cyan-500/10 m-4 rounded-xl border border-cyan-500/20">
-                <div class="flex items-center gap-2 text-[10px] text-cyan-400 font-bold uppercase">
-                    <span class="w-2 h-2 bg-cyan-400 rounded-full loading-dot"></span>
-                    Gemini 引擎已就绪
-                </div>
-            </div>
-        </aside>
-
-        <main class="flex-1 flex flex-col overflow-hidden">
-            <header class="h-16 bg-white border-b border-slate-200 px-8 flex justify-between items-center shadow-sm">
-                <h2 id="header-title" class="text-lg font-bold text-slate-800">数字化看板</h2>
-                <div class="flex items-center gap-4">
-                    <div class="text-right">
-                        <p class="text-[10px] font-black text-slate-400 uppercase leading-none">AI Model</p>
-                        <p id="api-status" class="text-xs font-bold text-slate-600">Gemini 1.5 Flash</p>
-                    </div>
-                    <div class="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center text-white font-bold text-sm">AD</div>
-                </div>
-            </header>
-
-            <div class="flex-1 overflow-y-auto p-8">
-                
-                <div id="dashboard" class="tab-content active max-w-7xl mx-auto space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-xs font-bold text-slate-500 uppercase">FB 点击单价 (CPC)</p>
-                            <h3 class="text-3xl font-black mt-2 text-blue-600">$0.42</h3>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-xs font-bold text-slate-500 uppercase">实时 ROI</p>
-                            <h3 class="text-3xl font-black mt-2 text-green-600">5.1x</h3>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-xs font-bold text-slate-500 uppercase">Gemini 文案采纳率</p>
-                            <h3 class="text-3xl font-black mt-2">94%</h3>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-xs font-bold text-slate-500 uppercase">总覆盖人数</p>
-                            <h3 class="text-3xl font-black mt-2">1.2M</h3>
-                        </div>
-                    </div>
-
-                    <div class="bg-gradient-to-r from-slate-900 to-blue-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-                        <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                            <div>
-                                <h3 class="text-2xl font-black mb-2 italic flex items-center gap-2">
-                                    <i data-lucide="sparkles" class="text-cyan-400"></i> Gemini 竞价分析报告
-                                </h3>
-                                <p class="text-slate-300 text-sm max-w-xl leading-relaxed">
-                                    Gemini 已分析最新的 Facebook 竞价趋势：北美下午时段流量成本预计下降 12%，建议在 14:00-17:00 集中释放 60% 的日预算。
-                                </p>
-                            </div>
-                            <button class="bg-cyan-500 hover:bg-cyan-400 text-slate-900 px-8 py-4 rounded-2xl font-black transition-all shadow-lg whitespace-nowrap">
-                                执行竞价优化
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="ai-hub" class="tab-content max-w-6xl mx-auto space-y-6">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 space-y-4">
-                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-black text-slate-800 flex items-center gap-2">
-                                        <i data-lucide="message-square" class="text-blue-500"></i> 输入指令
-                                    </h3>
-                                    <select id="ai-mode" class="text-xs font-bold bg-slate-100 border-none rounded-lg px-3 py-1.5 outline-none">
-                                        <option value="copywrite">Facebook/TikTok 文案创作</option>
-                                        <option value="translate">Gemini 专业翻译与口语纠错</option>
-                                        <option value="analysis">产品卖点分析与竞价建议</option>
-                                    </select>
-                                </div>
-                                <textarea id="ai-input" class="w-full h-64 p-5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 outline-none transition-all text-sm leading-relaxed" placeholder="例如：我们是一款工业级 3D 打印机，目标市场是德国制造业，强调精密和 24 小时售后..."></textarea>
-                                <button onclick="handleGeminiSubmit()" id="main-gen-btn" class="w-full mt-4 bg-slate-900 text-white py-4 rounded-xl font-black hover:bg-black transition-all flex justify-center items-center gap-2 shadow-lg">
-                                    <i data-lucide="brain-circuit" class="w-5 h-5"></i> 启动 Gemini 引擎
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="space-y-6">
-                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                                <h4 class="font-bold text-xs mb-4 flex items-center gap-2 text-slate-400 uppercase tracking-widest">
-                                    平台规则监控
-                                </h4>
-                                <div id="analysis-result" class="space-y-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                        <span class="text-xs font-medium">Meta Ads 准则符合</span>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                        <span class="text-xs font-medium">TikTok 版权检测通过</span>
-                                    </div>
-                                    <div class="p-4 bg-blue-50 rounded-xl text-[11px] text-blue-700 leading-relaxed">
-                                        Gemini 实时分析：建议在文案开头加入 3 秒内的钩子（Hook），德国市场更偏好数据化的描述。
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="ai-result-box" class="hidden bg-white p-8 rounded-3xl border-2 border-blue-500 shadow-2xl animate-in fade-in slide-in-from-bottom-4">
-                        <div id="ai-output" class="text-slate-700 text-sm leading-loose whitespace-pre-wrap font-medium"></div>
-                    </div>
-                </div>
-
-                <div id="ads-monitor" class="tab-content max-w-7xl mx-auto space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                            <div class="p-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                                <span class="text-xs font-bold flex items-center gap-2"><i data-lucide="facebook" class="text-blue-600 w-4 h-4"></i> Facebook Ads</span>
-                                <span class="text-[10px] font-bold text-green-500 uppercase">实时同步中</span>
-                            </div>
-                            <div class="h-48 bg-slate-200 flex items-center justify-center italic text-slate-400 text-xs">
-                                [ 实时调取的广告图片 ]
-                            </div>
-                            <div class="p-4 space-y-2">
-                                <h4 class="text-sm font-bold truncate">Industrial 3D Solution #2</h4>
-                                <p class="text-[10px] text-slate-500">最新评论: "What's the precision rate?"</p>
-                                <div class="pt-2 flex justify-between items-center border-t border-slate-100">
-                                    <span class="text-xs font-bold">竞价: $1.85</span>
-                                    <button class="text-[10px] text-blue-600 font-bold">查看详情</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="settings" class="tab-content max-w-4xl mx-auto">
-                    <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-                        <h3 class="font-black mb-6 flex items-center gap-2"><i data-lucide="shield-check"></i> Gemini API 配置</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block">Google Gemini API Key</label>
-                                <input type="password" id="gemini-key-input" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 font-mono text-sm" placeholder="在此输入你的 Gemini Key...">
-                            </div>
-                            <button onclick="saveApiKey()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all">确认并连接模型</button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </main>
+<div class="container" style="display: flex; height: calc(100vh - 64px);">
+    <div class="sidebar">
+        <div class="menu-group">
+            <div class="menu-label">市场感知</div>
+            <div class="menu-item active" onclick="App.page('hunter')">🔍 全球选品猎手</div>
+            <div class="menu-item" onclick="App.page('competitor')">👥 竞品动态监控</div>
+        </div>
+        <div class="menu-group">
+            <div class="menu-label">系统内核</div>
+            <div class="menu-item" onclick="App.page('nodes')">🌐 分布式爬虫集群</div>
+            <div class="menu-item" onclick="App.page('data_flow')">🧬 数据清洗中心</div>
+        </div>
     </div>
 
-    <script>
-        lucide.createIcons();
+    <div class="content">
+        <div id="hunter" class="section active">
+            <div class="stat-grid">
+                <div class="stat-box"><h4>全网实时商品数</h4><span class="val" id="total_sku">1,240,582</span></div>
+                <div class="stat-box"><h4>今日高毛利选品</h4><span class="val" style="color:var(--success)">86</span></div>
+                <div class="stat-box"><h4>OpenClaw 拦截风险</h4><span class="val" id="intercept_val">142</span></div>
+                <div class="stat-box"><h4>数据同步延迟</h4><span class="val" style="color:var(--primary)">14ms</span></div>
+            </div>
 
-        const CONFIG = {
-            apiKey: localStorage.getItem('gemini_api_key') || '',
-            model: 'gemini-1.5-flash'
-        };
+            <div class="search-row">
+                <input type="text" id="search_input" placeholder="输入产品关键词（如：Camping Gear）...">
+                <button class="primary" id="btn_analysis" onclick="App.runAIAnalysis()">AI 深度筛选</button>
+                <button class="claw-btn" onclick="App.startDeepCrawl()">全网穿透抓取</button>
+            </div>
 
-        if(CONFIG.apiKey) {
-            document.getElementById('gemini-key-input').value = CONFIG.apiKey;
-            document.getElementById('api-status').innerText = "Gemini 1.5 Flash (已连接)";
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
+                <div class="card">
+                    <h3>💡 商业决策建议：高潜力产品流</h3>
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th>商品名称</th>
+                                <th>来源平台</th>
+                                <th>建议出价</th>
+                                <th>蓝海系数</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product_list"></tbody>
+                    </table>
+                </div>
+
+                <div class="card" style="background: var(--claw-bg); border: none;">
+                    <h3 style="color: #fff; margin-bottom: 15px;">📡 OpenClaw 实时抓取流</h3>
+                    <div class="claw-console" id="terminal">
+                        > OpenClaw Kernel v5.0.2 initialized...<br>
+                        > 正在连接分布式代理网格 (128 Nodes Online)...<br>
+                        > 监听全球电商数据网格中...
+                    </div>
+                    <div style="margin-top: 15px; color: var(--gray); font-size: 11px;">
+                        当前爬虫并发数: <span id="concurrency">42</span> | IP 轮换频率: 2.5s
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="nodes" class="section">
+            <div class="card">
+                <h3>🌐 分布式爬虫节点负载 (Global Mesh)</h3>
+                <div style="height: 300px; display: flex; align-items: flex-end; gap: 10px; background: #f9f9fb; padding: 20px; border-radius: 16px;" id="chart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+/**
+ * GLO ENGINE: 接入免费 AI 能力版
+ */
+const App = {
+    intercepts: 142,
+    isProcessing: false,
+
+    init() {
+        this.updateClock();
+        this.renderChart();
+        this.renderProducts();
+        this.startLiveData();
+        setInterval(() => this.updateClock(), 1000);
+    },
+
+    updateClock() {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+    },
+
+    page(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(event) event.currentTarget.classList.add('active');
+    },
+
+    // 模拟数据渲染
+    renderProducts(data = null) {
+        const defaultList = [
+            { name: "Portable Solar Panel", platform: "Amazon US", price: "$45.90", blue: "8.9", status: "蓝海高潜" },
+            { name: "MagSafe Power Bank", platform: "TikTok Shop", price: "$12.50", blue: "7.2", status: "快速增长" }
+        ];
+        const list = data || defaultList;
+        const tbody = document.getElementById('product_list');
+        tbody.innerHTML = list.map(item => `
+            <tr>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.platform}</td>
+                <td>${item.price}</td>
+                <td>${item.blue}</td>
+                <td><span class="tag ${parseFloat(item.blue) > 7 ? 'tag-success' : 'tag-warning'}">${item.status}</span></td>
+            </tr>
+        `).join('');
+    },
+
+    addLog(msg, color = "#00ffd0") {
+        const term = document.getElementById('terminal');
+        const time = new Date().toLocaleTimeString().split(' ')[0];
+        term.innerHTML += `<br><span style="color:${color}">[${time}] > ${msg}</span>`;
+        term.scrollTop = term.scrollHeight;
+    },
+
+    // 模拟接入免费 AI API 的逻辑
+    async runAIAnalysis() {
+        const input = document.getElementById('search_input').value;
+        if(!input) { alert("请输入关键词"); return; }
+        
+        const btn = document.getElementById('btn_analysis');
+        btn.disabled = true;
+        btn.innerText = "AI 分析中...";
+        
+        this.addLog(`发起 AI 请求：正在检索 [${input}] 的全球趋势...`, "#fff");
+
+        try {
+            // 这里我们使用一个免费的开源大模型 API (Hugging Face 免登录接口示例逻辑)
+            // 实际开发中你可以替换为具体的 API URL
+            await new Promise(resolve => setTimeout(resolve, 2000)); // 模拟网络延迟
+
+            const mockAIReponse = {
+                advice: `基于向量数据库分析，${input} 在北美市场搜索量上涨 22%。`,
+                suggestion: "建议关注环保材质供应商，利润空间约 18%。"
+            };
+
+            this.addLog(`AI 响应成功：${mockAIReponse.advice}`, "#34c759");
+            this.addLog(`决策建议：${mockAIReponse.suggestion}`, "#ff9500");
+            
+            // 动态更新列表以体现“分析结果”
+            this.renderProducts([
+                { name: `${input} Pro Max`, platform: "Global Sources", price: "询价", blue: "9.5", status: "绝佳机会" },
+                { name: `Refurbished ${input}`, platform: "eBay", price: "$19.00", blue: "6.8", status: "稳定利基" }
+            ]);
+
+        } catch (error) {
+            this.addLog("AI 连接超时，切换至本地备用引擎...", "#ff3b30");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "AI 深度筛选";
         }
+    },
 
-        function saveApiKey() {
-            const val = document.getElementById('gemini-key-input').value;
-            if(!val) return alert("请输入 API Key");
-            localStorage.setItem('gemini_api_key', val);
-            CONFIG.apiKey = val;
-            document.getElementById('api-status').innerText = "已成功保存";
-            alert("Gemini 引擎配置成功！");
+    startDeepCrawl() {
+        this.addLog("启动 OpenClaw 分布式内核...", "#00ffd0");
+        setTimeout(() => this.addLog("正在通过代理穿透目标防火墙...", "#fff"), 1000);
+        setTimeout(() => {
+            this.addLog("✅ 原始数据包抓取完成，进入清洗队列。", "#34c759");
+            this.intercepts += 5;
+            document.getElementById('intercept_val').innerText = this.intercepts;
+        }, 3000);
+    },
+
+    renderChart() {
+        const chart = document.getElementById('chart');
+        for(let i=0; i<15; i++) {
+            const h = Math.floor(Math.random() * 80) + 10;
+            const bar = document.createElement('div');
+            bar.style.cssText = `flex:1; background:var(--primary); height:${h}%; border-radius:4px; opacity:0.6; transition: height 0.5s;`;
+            chart.appendChild(bar);
         }
+    },
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById('btn-' + tabId).classList.add('active');
-            document.getElementById('header-title').innerText = document.getElementById('btn-' + tabId).innerText.trim();
-            lucide.createIcons();
-        }
+    startLiveData() {
+        setInterval(() => {
+            document.getElementById('total_sku').innerText = (1240582 + Math.floor(Math.random() * 1000)).toLocaleString();
+        }, 2000);
+    }
+};
 
-        // --- 核心：Gemini API 调用逻辑 ---
-        async function handleGeminiSubmit() {
-            if(!CONFIG.apiKey) {
-                switchTab('settings');
-                return alert("请先设置 Gemini API Key！");
-            }
+window.onload = () => App.init();
+</script>
 
-            const input = document.getElementById('ai-input').value;
-            const mode = document.getElementById('ai-mode').value;
-            const btn = document.getElementById('main-gen-btn');
-            const resultBox = document.getElementById('ai-result-box');
-            const outputText = document.getElementById('ai-output');
-
-            if(!input) return alert("内容不能为空");
-
-            btn.disabled = true;
-            btn.innerHTML = '<span class="loading-dot font-black italic">Gemini 正在分析全球 B2B 数据库...</span>';
-            resultBox.classList.remove('hidden');
-            outputText.innerText = "生成中...";
-
-            let systemPrompt = "";
-            if(mode === 'copywrite') {
-                systemPrompt = "作为B2B营销专家。请为该产品生成：1. Facebook 广告文案 2. TikTok 脚本大纲 3. 针对欧洲市场的竞价策略建议。";
-            } else if(mode === 'translate') {
-                systemPrompt = "作为专业外贸翻译。请将以下内容翻译为地道的商务英语，纠正语法错误，并给出三个更具吸引力的改写版本。";
-            } else {
-                systemPrompt = "请深度分析该产品的核心卖点，并对比同类产品给出价格定位建议。";
-            }
-
-            try {
-                // Gemini API 结构：注意这里使用的是 v1beta 接口
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${CONFIG.model}:generateContent?key=${CONFIG.apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: systemPrompt + "\n\n用户输入内容：\n" + input }]
-                        }],
-                        generationConfig: {
-                            temperature: 0.7,
-                            maxOutputTokens: 2000
-                        }
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.error) throw new Error(data.error.message);
-
-                // 解析 Gemini 返回的文本
-                const resultText = data.candidates[0].content.parts[0].text;
-                outputText.innerText = resultText;
-
-            } catch (error) {
-                outputText.innerText = "连接失败：" + error.message + "\n请确保 API Key 正确且网络能够访问 Google 服务。";
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i data-lucide="brain-circuit" class="w-5 h-5"></i> 重新启动 Gemini 引擎';
-                lucide.createIcons();
-            }
-        }
-    </script>
 </body>
 </html>
