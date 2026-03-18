@@ -2,283 +2,80 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLO ERP | 外贸 B 端全球市场洞察引擎</title>
+    <title>GLO ERP | 极简 HTML 直连版</title>
     <style>
-        :root { 
-            --primary: #0071e3; --success: #34c759; --warning: #ff9500; --danger: #ff3b30; 
-            --dark: #1d1d1f; --gray: #86868b; --light: #f5f5f7; --glass: rgba(255, 255, 255, 0.85);
-            --lobster: #ff5733; --openclaw: #00ffd0; 
-            --claw-bg: #0c0c0e;
-        }
-
-        *{margin:0;padding:0;box-sizing:border-box;font-family: "SF Pro Display", "PingFang SC", system-ui;}
-
-        body { background: #f0f2f5; color: var(--dark); overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
-
-        /* 头部导航 */
-        .header {
-            height: 64px; background: var(--glass); backdrop-filter: blur(25px);
-            border-bottom: 1px solid rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between;
-            padding: 0 24px; z-index: 1000;
-        }
-
-        .logo {
-            font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px;
-            background: linear-gradient(135deg, var(--primary), var(--openclaw));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-
-        .ai-group { display: flex; gap: 12px; }
-        .ai-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; color: #fff; font-weight: bold; }
-        .badge-openclaw { background: var(--openclaw); color: var(--dark); box-shadow: 0 0 10px rgba(0,255,208,0.4); }
-
-        /* 侧边栏 */
-        .sidebar { width: 260px; background: #fff; border-right: 1px solid #d2d2d7; padding: 24px 12px; }
-        .menu-group { margin-bottom: 24px; }
-        .menu-label { font-size: 11px; color: var(--gray); text-transform: uppercase; margin-bottom: 10px; font-weight: 700; letter-spacing: 1px; }
-
-        .menu-item {
-            padding: 12px 16px; cursor: pointer; border-radius: 12px; margin-bottom: 4px;
-            transition: 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; color: #424245;
-        }
-        .menu-item:hover { background: var(--light); transform: translateX(5px); }
-        .menu-item.active { background: var(--dark); color: #fff; }
-
-        /* 内容区 */
-        .content { flex: 1; padding: 24px; overflow-y: auto; scroll-behavior: smooth; }
-        .section { display: none; animation: fadeIn 0.4s ease; }
-        .section.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 统计卡片 */
-        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-        .stat-box { background: #fff; padding: 20px; border-radius: 18px; border: 1px solid #eee; }
-        .stat-box h4 { font-size: 11px; color: var(--gray); text-transform: uppercase; margin-bottom: 8px; }
-        .stat-box .val { font-size: 24px; font-weight: 800; display: block; }
-
-        /* 选品列表 */
-        .card { background: #fff; border-radius: 22px; padding: 24px; margin-bottom: 24px; border: 1px solid rgba(0,0,0,0.05); }
-        .product-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .product-table th { text-align: left; padding: 12px; border-bottom: 1px solid #eee; font-size: 12px; color: var(--gray); }
-        .product-table td { padding: 12px; border-bottom: 1px solid #fafafa; font-size: 13px; }
-
-        /* OpenClaw 终端 */
-        .claw-console { background: var(--claw-bg); color: var(--openclaw); padding: 20px; border-radius: 16px; height: 300px; overflow-y: auto; font-family: 'Consolas', monospace; font-size: 11px; line-height: 1.6; }
-
-        /* 搜索与筛选 */
-        .search-row { display: flex; gap: 12px; margin-bottom: 20px; }
-        input { flex: 1; padding: 12px 16px; border: 1px solid #ddd; border-radius: 12px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--openclaw); box-shadow: 0 0 10px rgba(0,255,208,0.2); }
-        button { padding: 12px 24px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        button.primary { background: var(--dark); color: #fff; }
-        button.claw-btn { background: var(--openclaw); color: var(--dark); }
-
-        .tag { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        .tag-success { background: rgba(52, 199, 89, 0.1); color: var(--success); }
-        .tag-warning { background: rgba(255, 149, 0, 0.1); color: var(--warning); }
+        body { font-family: sans-serif; background: #f4f7f9; padding: 40px; color: #333; }
+        .box { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        input { width: 70%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+        button { padding: 12px 24px; background: #0071e3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #005bbd; }
+        #log { margin-top: 20px; background: #1d1d1f; color: #00ffd0; padding: 15px; border-radius: 10px; font-family: monospace; height: 200px; overflow-y: auto; font-size: 13px; }
+        .status { font-size: 12px; margin-bottom: 10px; color: #666; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="logo">🛰️ GLO | GLOBAL MARKET INSIGHT</div>
-    <div class="ai-group">
-        <div class="ai-badge badge-openclaw">OpenClaw: Deep Scanning</div>
-        <div id="clock" style="font-family: monospace; font-weight: bold; margin-left: 20px; color: var(--gray);">00:00:00</div>
-    </div>
-</div>
-
-<div class="container" style="display: flex; height: calc(100vh - 64px);">
-    <div class="sidebar">
-        <div class="menu-group">
-            <div class="menu-label">市场感知</div>
-            <div class="menu-item active" onclick="App.page('hunter')">🔍 全球选品猎手</div>
-            <div class="menu-item" onclick="App.page('competitor')">👥 竞品动态监控</div>
-        </div>
-        <div class="menu-group">
-            <div class="menu-label">系统内核</div>
-            <div class="menu-item" onclick="App.page('nodes')">🌐 分布式爬虫集群</div>
-            <div class="menu-item" onclick="App.page('data_flow')">🧬 数据清洗中心</div>
-        </div>
+<div class="box">
+    <h2>🛰️ GLO ERP 选品引擎</h2>
+    <p class="status">节点状态: <span id="api_status">正在检测本地 Llama 3...</span></p>
+    
+    <div style="display: flex; gap: 10px;">
+        <input type="text" id="userInput" placeholder="输入产品关键词 (例如: 智能手表)">
+        <button id="sendBtn">AI 深度分析</button>
     </div>
 
-    <div class="content">
-        <div id="hunter" class="section active">
-            <div class="stat-grid">
-                <div class="stat-box"><h4>全网实时商品数</h4><span class="val" id="total_sku">1,240,582</span></div>
-                <div class="stat-box"><h4>今日高毛利选品</h4><span class="val" style="color:var(--success)">86</span></div>
-                <div class="stat-box"><h4>OpenClaw 拦截风险</h4><span class="val" id="intercept_val">142</span></div>
-                <div class="stat-box"><h4>数据同步延迟</h4><span class="val" style="color:var(--primary)">14ms</span></div>
-            </div>
-
-            <div class="search-row">
-                <input type="text" id="search_input" placeholder="输入产品关键词（如：Camping Gear）...">
-                <button class="primary" id="btn_analysis" onclick="App.runAIAnalysis()">AI 深度筛选</button>
-                <button class="claw-btn" onclick="App.startDeepCrawl()">全网穿透抓取</button>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
-                <div class="card">
-                    <h3>💡 商业决策建议：高潜力产品流</h3>
-                    <table class="product-table">
-                        <thead>
-                            <tr>
-                                <th>商品名称</th>
-                                <th>来源平台</th>
-                                <th>建议出价</th>
-                                <th>蓝海系数</th>
-                                <th>状态</th>
-                            </tr>
-                        </thead>
-                        <tbody id="product_list"></tbody>
-                    </table>
-                </div>
-
-                <div class="card" style="background: var(--claw-bg); border: none;">
-                    <h3 style="color: #fff; margin-bottom: 15px;">📡 OpenClaw 实时抓取流</h3>
-                    <div class="claw-console" id="terminal">
-                        > OpenClaw Kernel v5.0.2 initialized...<br>
-                        > 正在连接分布式代理网格 (128 Nodes Online)...<br>
-                        > 监听全球电商数据网格中...
-                    </div>
-                    <div style="margin-top: 15px; color: var(--gray); font-size: 11px;">
-                        当前爬虫并发数: <span id="concurrency">42</span> | IP 轮换频率: 2.5s
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="nodes" class="section">
-            <div class="card">
-                <h3>🌐 分布式爬虫节点负载 (Global Mesh)</h3>
-                <div style="height: 300px; display: flex; align-items: flex-end; gap: 10px; background: #f9f9fb; padding: 20px; border-radius: 16px;" id="chart"></div>
-            </div>
-        </div>
-    </div>
+    <div id="log">>>> 系统就绪。请确保 Ollama 已启动并允许跨域。</div>
 </div>
 
 <script>
-/**
- * GLO ENGINE: 接入免费 AI 能力版
- */
-const App = {
-    intercepts: 142,
-    isProcessing: false,
+    const logBox = document.getElementById('log');
+    const statusText = document.getElementById('api_status');
 
-    init() {
-        this.updateClock();
-        this.renderChart();
-        this.renderProducts();
-        this.startLiveData();
-        setInterval(() => this.updateClock(), 1000);
-    },
-
-    updateClock() {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-    },
-
-    page(id) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(event) event.currentTarget.classList.add('active');
-    },
-
-    // 模拟数据渲染
-    renderProducts(data = null) {
-        const defaultList = [
-            { name: "Portable Solar Panel", platform: "Amazon US", price: "$45.90", blue: "8.9", status: "蓝海高潜" },
-            { name: "MagSafe Power Bank", platform: "TikTok Shop", price: "$12.50", blue: "7.2", status: "快速增长" }
-        ];
-        const list = data || defaultList;
-        const tbody = document.getElementById('product_list');
-        tbody.innerHTML = list.map(item => `
-            <tr>
-                <td><strong>${item.name}</strong></td>
-                <td>${item.platform}</td>
-                <td>${item.price}</td>
-                <td>${item.blue}</td>
-                <td><span class="tag ${parseFloat(item.blue) > 7 ? 'tag-success' : 'tag-warning'}">${item.status}</span></td>
-            </tr>
-        `).join('');
-    },
-
-    addLog(msg, color = "#00ffd0") {
-        const term = document.getElementById('terminal');
-        const time = new Date().toLocaleTimeString().split(' ')[0];
-        term.innerHTML += `<br><span style="color:${color}">[${time}] > ${msg}</span>`;
-        term.scrollTop = term.scrollHeight;
-    },
-
-    // 模拟接入免费 AI API 的逻辑
-    async runAIAnalysis() {
-        const input = document.getElementById('search_input').value;
-        if(!input) { alert("请输入关键词"); return; }
-        
-        const btn = document.getElementById('btn_analysis');
-        btn.disabled = true;
-        btn.innerText = "AI 分析中...";
-        
-        this.addLog(`发起 AI 请求：正在检索 [${input}] 的全球趋势...`, "#fff");
-
-        try {
-            // 这里我们使用一个免费的开源大模型 API (Hugging Face 免登录接口示例逻辑)
-            // 实际开发中你可以替换为具体的 API URL
-            await new Promise(resolve => setTimeout(resolve, 2000)); // 模拟网络延迟
-
-            const mockAIReponse = {
-                advice: `基于向量数据库分析，${input} 在北美市场搜索量上涨 22%。`,
-                suggestion: "建议关注环保材质供应商，利润空间约 18%。"
-            };
-
-            this.addLog(`AI 响应成功：${mockAIReponse.advice}`, "#34c759");
-            this.addLog(`决策建议：${mockAIReponse.suggestion}`, "#ff9500");
-            
-            // 动态更新列表以体现“分析结果”
-            this.renderProducts([
-                { name: `${input} Pro Max`, platform: "Global Sources", price: "询价", blue: "9.5", status: "绝佳机会" },
-                { name: `Refurbished ${input}`, platform: "eBay", price: "$19.00", blue: "6.8", status: "稳定利基" }
-            ]);
-
-        } catch (error) {
-            this.addLog("AI 连接超时，切换至本地备用引擎...", "#ff3b30");
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "AI 深度筛选";
-        }
-    },
-
-    startDeepCrawl() {
-        this.addLog("启动 OpenClaw 分布式内核...", "#00ffd0");
-        setTimeout(() => this.addLog("正在通过代理穿透目标防火墙...", "#fff"), 1000);
-        setTimeout(() => {
-            this.addLog("✅ 原始数据包抓取完成，进入清洗队列。", "#34c759");
-            this.intercepts += 5;
-            document.getElementById('intercept_val').innerText = this.intercepts;
-        }, 3000);
-    },
-
-    renderChart() {
-        const chart = document.getElementById('chart');
-        for(let i=0; i<15; i++) {
-            const h = Math.floor(Math.random() * 80) + 10;
-            const bar = document.createElement('div');
-            bar.style.cssText = `flex:1; background:var(--primary); height:${h}%; border-radius:4px; opacity:0.6; transition: height 0.5s;`;
-            chart.appendChild(bar);
-        }
-    },
-
-    startLiveData() {
-        setInterval(() => {
-            document.getElementById('total_sku').innerText = (1240582 + Math.floor(Math.random() * 1000)).toLocaleString();
-        }, 2000);
+    function addLog(msg, isError = false) {
+        const time = new Date().toLocaleTimeString();
+        logBox.innerHTML += `<div style="color: ${isError ? '#ff3b30' : '#00ffd0'}">[${time}] ${msg}</div>`;
+        logBox.scrollTop = logBox.scrollHeight;
     }
-};
 
-window.onload = () => App.init();
+    // 1. 检查本地 AI 状态
+    async function checkStatus() {
+        try {
+            const res = await fetch('http://localhost:11434/api/tags');
+            if (res.ok) {
+                statusText.innerText = "● 本地 AI 已连接";
+                statusText.style.color = "#34c759";
+            }
+        } catch (e) {
+            statusText.innerText = "○ 未连接 (请设置 OLLAMA_ORIGINS)";
+            statusText.style.color = "#ff3b30";
+        }
+    }
+
+    // 2. 调用 AI 分析
+    document.getElementById('sendBtn').onclick = async () => {
+        const text = document.getElementById('userInput').value;
+        if (!text) return;
+
+        addLog(`分析请求: ${text}...`);
+        
+        try {
+            const response = await fetch('http://localhost:11434/api/generate', {
+                method: 'POST',
+                body: JSON.stringify({
+                    model: 'llama3',
+                    prompt: `作为选品专家，分析${text}的外贸潜力，50字以内。`,
+                    stream: false
+                })
+            });
+
+            const data = await response.json();
+            addLog(`AI 建议: ${data.response}`);
+        } catch (error) {
+            addLog(`错误: 无法访问本地 API。请检查是否开启了跨域权限或 Ollama 是否运行。`, true);
+        }
+    };
+
+    checkStatus();
 </script>
 
 </body>
