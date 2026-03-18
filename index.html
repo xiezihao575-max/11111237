@@ -1,116 +1,55 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdSmart - 社交平台广告一站式投放</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .card { @apply bg-white p-6 rounded-lg shadow-md mb-6; }
-        .btn-primary { @apply bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition; }
-    </style>
+<meta charset="UTF-8" />
+<title>社交媒体广告分析平台</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body>
+<h2>广告投放数据分析</h2>
+<canvas id="myChart" width="600" height="400"></canvas>
 
-    <nav class="bg-slate-900 text-white p-4 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold">AdSmart AI</h1>
-            <div class="space-x-4">
-                <a href="#" class="hover:text-blue-400">数据看板</a>
-                <a href="#" class="hover:text-blue-400">广告模拟</a>
-                <a href="#" class="hover:text-blue-400">一键投放</a>
-            </div>
-        </div>
-    </nav>
+<script>
+async function fetchData() {
+    const response = await fetch('/api/ads');
+    const data = await response.json();
+    return data;
+}
 
-    <div class="container mx-auto mt-8 px-4">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <div class="lg:col-span-2">
-                <div class="card">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2">📊 竞品数据抓取与分析</h2>
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" placeholder="输入 Facebook 公共主页或关键词 URL" class="flex-1 border p-2 rounded">
-                        <button class="btn-primary" onclick="alert('正在启动分布式爬虫分析...')">开始分析</button>
-                    </div>
-                    <div class="grid grid-cols-3 gap-4 text-center">
-                        <div class="bg-blue-50 p-4 rounded">
-                            <p class="text-sm text-gray-500">平均互动率</p>
-                            <p class="text-2xl font-bold text-blue-600">4.8%</p>
-                        </div>
-                        <div class="bg-green-50 p-4 rounded">
-                            <p class="text-sm text-gray-500">热门受众年龄</p>
-                            <p class="text-2xl font-bold text-green-600">25-34</p>
-                        </div>
-                        <div class="bg-purple-50 p-4 rounded">
-                            <p class="text-sm text-gray-500">预估转化成本</p>
-                            <p class="text-2xl font-bold text-purple-600">$12.5</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2">🎬 傻瓜式广告创建</h2>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block mb-1 font-medium">1. 上传视频/商品素材</label>
-                            <input type="file" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                        </div>
-                        <div>
-                            <label class="block mb-1 font-medium">2. AI 生成广告文案</label>
-                            <textarea class="w-full border p-2 rounded" rows="3">这款产品太神奇了！立即点击购买，享受50%折扣。</textarea>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block mb-1 font-medium">投放地区</label>
-                                <select class="w-full border p-2 rounded">
-                                    <option>美国</option>
-                                    <option>东南亚</option>
-                                    <option>全球投放</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block mb-1 font-medium">每日预算 ($)</label>
-                                <input type="number" value="50" class="w-full border p-2 rounded">
-                            </div>
-                        </div>
-                        <button class="w-full bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600 shadow-lg">🚀 一键同步至 Facebook 广告中心</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="lg:col-span-1">
-                <div class="card bg-slate-800 text-white">
-                    <h2 class="text-xl font-bold mb-4 border-b border-slate-700 pb-2">💡 AI 投放建议</h2>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <span class="bg-green-500 text-white text-xs p-1 rounded mr-2 mt-1">建议</span>
-                            <p class="text-sm">根据目前爬虫数据，周三下午 3 点投放互动率最高。</p>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="bg-yellow-500 text-white text-xs p-1 rounded mr-2 mt-1">预警</span>
-                            <p class="text-sm">当前素材重复率较高，建议使用系统生成的 AI 混剪视频以降低封号风险。</p>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="bg-blue-500 text-white text-xs p-1 rounded mr-2 mt-1">策略</span>
-                            <p class="text-sm">建议开启“自动出价”，系统将根据实时流量调整价格。</p>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="card">
-                    <h2 class="text-xl font-bold mb-2">💰 实时费用估算</h2>
-                    <div class="text-3xl font-mono text-blue-600 mb-2">$350.00</div>
-                    <p class="text-xs text-gray-400">基于选定人群及 7 天投放周期预估</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <footer class="text-center p-8 text-gray-500 text-sm">
-        &copy; 2026 AdSmart Data Intelligence Platform. 仅供模拟与合规开发使用。
-    </footer>
-
+fetchData().then(data => {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.platforms,
+            datasets: [
+                {
+                    label: '点击数',
+                    data: data.clicks,
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)'
+                },
+                {
+                    label: '曝光量',
+                    data: data.impressions,
+                    backgroundColor: 'rgba(153, 102, 255, 0.5)'
+                },
+                {
+                    label: '转化数',
+                    data: data.conversions,
+                    backgroundColor: 'rgba(255, 159, 64, 0.5)'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero:true
+                }
+            }
+        }
+    });
+});
+</script>
 </body>
 </html>
